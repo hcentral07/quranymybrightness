@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koranen — alla 114 suror | Ljuskällan</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <nav class="main-nav">
+      <a href="index.html">Hem</a>
+      <a href="quran.html" class="current">Koranen</a>
+      <a href="tajwid.html">Tajwid</a>
+      <a href="om.html">Om sidan</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>Koranens 114 suror</h1>
+  <p class="lede">Välj en sura för att läsa den på arabiska och svenska, vers för vers, med länk vidare till tafsir för varje vers.</p>
+
+  <div id="list"><p class="loading">Hämtar listan över suror …</p></div>
+</main>
+
+<footer>
+  <p>Suralistan hämtas live från alquran.cloud. Svensk betydelse av varje namn är en vägledande översättning.</p>
+</footer>
+
+<script src="js/surah-data.js"></script>
+<script src="js/app.js"></script>
+<script>
+(async function(){
+  const container = document.getElementById("list");
+
+  const ORN = `<svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g fill="#d8a455"><rect x="15" y="15" width="34" height="34" rx="2"></rect><rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect></g><circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle><circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle></svg>`;
+
+  try{
+    const surahs = await getSurahList();
+    const ul = el("ul", { class: "surah-list" });
+    surahs.forEach(s => {
+      const link = el("a", { class: "sura-h", href: `sura.html?sura=${s.number}` });
+      link.insertAdjacentHTML("beforeend", ORN);
+      link.appendChild(el("span", {}, s.name));
+      link.insertAdjacentHTML("beforeend", ORN);
+
+      const row = el("li", { class: "surah-row" }, [
+        link,
+        el("span", { class: "surah-num" }, String(s.number)),
+        el("span", { class: "surah-names" }, [
+          el("span", { class: "translit" }, s.englishName),
+          el("span", { class: "swedish" }, SURAH_SV[s.number] || s.englishNameTranslation)
+        ]),
+        el("span", { class: "surah-meta" }, `${s.numberOfAyahs} verser · ${s.revelationType === "Meccan" ? "meckansk" : "medinensisk"}`)
+      ]);
+      ul.appendChild(row);
+    });
+    container.innerHTML = "";
+    container.appendChild(ul);
+  }catch(err){
+    container.innerHTML = `<p class="notice">Kunde inte hämta suralistan just nu (${err.message}). Kontrollera din internetanslutning och ladda om sidan.</p>`;
+  }
+})();
+</script>
+</body>
+</html>

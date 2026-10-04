@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Om sidan | Ljuskällan</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <nav class="main-nav">
+      <a href="index.html">Hem</a>
+      <a href="quran.html">Koranen</a>
+      <a href="tajwid.html">Tajwid</a>
+      <a href="om.html" class="current">Om sidan</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>Om Ljuskällan</h1>
+  <p class="lede">Ett oberoende, icke-kommersiellt studieprojekt för att läsa Koranen på svenska tillsammans med klassisk tafsir och tajwidlära.</p>
+
+  <h2>Datakällor</h2>
+  <p><strong>Koranens arabiska text:</strong> Uthmani-utgåvan, hämtad via det fria API:et <a href="https://alquran.cloud/api" target="_blank" rel="noopener">alquran.cloud</a> (drivs av Islamic Network). Ingen nyckel krävs.</p>
+  <p><strong>Svensk översättning:</strong> Knut Bernströms svenska tolkning av Koranen, tillgänglig genom samma API (utgåva <code>sv.bernstrom</code>), ursprungligen publicerad via <a href="https://tanzil.net/trans/sv.bernstrom" target="_blank" rel="noopener">Tanzil-projektet</a>.</p>
+  <p><strong>Tafsir:</strong> Ibn Kathirs tafsir (arabiska och en förkortad engelsk version) och al-Jalalayn (engelska och arabiska), hämtade via det öppna projektet <a href="https://github.com/spa5k/tafsir_api" target="_blank" rel="noopener">tafsir_api</a> samt via alquran.cloud för den arabiska al-Jalalayn-texten.</p>
+
+  <h2>Varför är tafsiren inte på svenska?</h2>
+  <p>Det finns i dagsläget ingen fri, öppet licensierad svensk översättning av klassiska tafsirverk som Ibn Kathir eller al-Jalalayn tillgänglig via något API. De svenska Koranöversättningar som finns (som Bernströms) omfattar själva korantexten och korta noter, men inte hela tafsirverk. Att producera en fullständig, tillförlitlig svensk översättning av exempelvis Ibn Kathirs tafsir — som omfattar flera tusen sidor — är ett stort översättningsarbete som den här sidan inte har gjort anspråk på att redan ha löst.</p>
+  <p>Om du vill driva det här vidare finns några realistiska vägar:</p>
+  <ul>
+    <li>Leta efter publicerade, tryckta svenska tafsiröversättningar och, med tillstånd från rättighetsinnehavaren, digitalisera och lägga till dem.</li>
+    <li>Bygga en egen översättningsprocess (mänsklig, eller maskinöversättning med efterföljande granskning av någon med tillräckliga kunskaper i klassisk arabiska och islamisk terminologi) och publicera resultatet som ett eget, öppet verk.</li>
+    <li>Samarbeta med en organisation eller enskilda lärda som redan arbetar med svensk islamisk litteratur.</li>
+  </ul>
+
+  <h2>Namn och oberoende</h2>
+  <p>Ljuskällan är inte kopplat till, och gör inte anspråk på innehåll eller design från, någon annan befintlig Korantjänst. Namnet syftar på hur Koranen i flera verser beskriver sig själv som "nur" (ljus) och vägledning.</p>
+
+  <h2>Teknik</h2>
+  <p>Sidan är byggd som ren HTML, CSS och JavaScript utan ramverk, och hämtar all korantext och tafsir direkt i webbläsaren vid varje sidvisning. Det gör sidan enkel att driftsätta var som helst — den behöver ingen databas eller serverkod.</p>
+</main>
+
+<footer>
+  <p>Frågor eller förbättringsförslag? Det här är ett fristående projekt — anpassa koden fritt efter eget behov.</p>
+</footer>
+
+</body>
+</html>

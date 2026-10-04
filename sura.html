@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sura | Ljuskällan</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <nav class="main-nav">
+      <a href="index.html">Hem</a>
+      <a href="quran.html" class="current">Koranen</a>
+      <a href="tajwid.html">Tajwid</a>
+      <a href="settings.html">Inställningar</a>
+      <a href="om.html">Om sidan</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div id="head"><p class="loading">Hämtar sura …</p></div>
+  <div id="ayahs"></div>
+  <div class="pager" id="pager"></div>
+</main>
+
+<footer>
+  <p>Arabisk text: Uthmani-utgåvan. Svensk översättning: Knut Bernström. Källa: alquran.cloud &amp; quran.com.</p>
+</footer>
+
+<div id="player-bar" class="player-bar" hidden aria-hidden="true">
+  <div class="player-inner">
+    <div class="player-controls">
+      <button class="player-btn" id="pb-prev" type="button" title="Föregående vers"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg></button>
+      <button class="player-btn player-btn-main" id="pb-toggle" type="button" title="Spela/Pausa"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
+      <button class="player-btn" id="pb-next" type="button" title="Nästa vers"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 6h2v12h-2zM6 6v12l8.5-6z"/></svg></button>
+    </div>
+    <div class="player-center">
+      <div class="player-label"><span class="player-title" id="pb-title">—</span><span class="player-sub" id="pb-sub">—</span></div>
+      <div class="player-scrub-wrap">
+        <span class="player-time" id="pb-time-cur">0:00</span>
+        <input type="range" class="player-scrub" id="pb-scrub" min="0" max="1000" value="0" step="1">
+        <span class="player-time" id="pb-time-dur">0:00</span>
+      </div>
+    </div>
+    <div class="player-extras">
+      <button class="player-btn player-btn-sm" id="pb-speed" type="button"><span id="pb-speed-label">1.0×</span></button>
+      <button class="player-btn player-btn-sm" id="pb-vol" type="button"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
+      <button class="player-btn player-btn-sm" id="pb-close" type="button"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<script src="js/surah-data.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/tajweed.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ---------- Basmala stripper ---------- */
+(function(){
+  const DIACRITICS_RE = /[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED\u08D4-\u08E1\u08E3-\u08FF]/g;
+  const ALEF_RE = /[أإٱآ]/g;
+  function stripDiacritics(s){ return s.replace(DIACRITICS_RE, "").replace(ALEF_RE, "ا"); }
+  const BASMALA_SKELETON = "بسمهللارحمنالرحيم".replace(/ /g, "");
+  function stripLeadingBasmala(text){
+    const stripped = stripDiacritics(text).replace(/\s+/g, "");
+    if(!stripped.startsWith(BASMALA_SKELETON)) return { basmala: null, rest: text };
+    let consumed = 0, i = 0;
+    for(; i < text.length && consumed < BASMALA_SKELETON.length; i++){
+      const ch = text[i];
+      if(DIACRITICS_RE.test(ch)){ DIACRITICS_RE.lastIndex = 0; continue; }
+      if(/\s/.test(ch)) continue;
+      consumed++;
+    }
+    while(i < text.length && /\s/.test(text[i])) i++;
+    return { basmala: text.slice(0, i).trim(), rest: text.slice(i) };
+  }
+  window.stripLeadingBasmala = stripLeadingBasmala;
+})();
+
+/* ---------- Cumulative ayah number ---------- */
+const LJ_PER_SURAH = [
+  7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,
+  112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,
+  59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,
+  52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,
+  8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6
+];
+function globalAyahNumber(surah, ayah){
+  let total = 0;
+  for (let i = 0; i < surah - 1; i++) total += LJ_PER_SURAH[i];
+  return total + ayah;
+}
+
+/* ---------- Single shared audio element ---------- */
+const ljPlayer = new Audio();
+ljPlayer.preload = "auto";
+function ljPlayUrl(url){
+  if (!url) return;
+  ljPlayer.pause();
+  ljPlayer.src = url;
+  ljPlayer.play().catch((err)=> console.warn("Audio failed:", url, err));
+}
+
+/* ---------- Icons ---------- */
+const PLAY_ICON  = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+const STOP_ICON  = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 7h10v10H7z"/></svg>';
+const PAUSE_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+const PLAY_BIG   = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+
+/* ---------- State ---------- */
+let SURAH_META = null;
+let VERSES = [];
+let AYAH_ELS = [];
+let RECITER_SLUG = "ar.alafasy";
+let RECITER_LABEL = "";
+let currentAyahIndex = 0;
+let autoAdvance = false;
+let currentVerseBtn = null;
+let currentVerseCleanup = null;
+let playToken = 0;
+let masterBtn = null;
+let fullSurahActive = false;
+const TIMING_OFFSET_MS = 0;    /* set to 0 now — no more guess-offset needed */
+
+const pb = {
+  root: document.getElementById("player-bar"),
+  title: document.getElementById("pb-title"),
+  sub: document.getElementById("pb-sub"),
+  timeCur: document.getElementById("pb-time-cur"),
+  timeDur: document.getElementById("pb-time-dur"),
+  scrub: document.getElementById("pb-scrub"),
+  toggle: document.getElementById("pb-toggle"),
+  prev: document.getElementById("pb-prev"),
+  next: document.getElementById("pb-next"),
+  speed: document.getElementById("pb-speed"),
+  speedLabel: document.getElementById("pb-speed-label"),
+  vol: document.getElementById("pb-vol"),
+  close: document.getElementById("pb-close")
+};
+const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
+let speedIdx = 1;
+
+function fmtTime(sec){
+  if (!isFinite(sec) || sec < 0) sec = 0;
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+function showPlayerBar(){
+  pb.root.hidden = false;
+  pb.root.setAttribute("aria-hidden", "false");
+  document.body.classList.add("has-player-bar");
+}
+function hidePlayerBar(){
+  pb.root.hidden = true;
+  pb.root.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("has-player-bar");
+}
+function updatePlayerBarFromAudio(){
+  const dur = ljPlayer.duration;
+  if (isFinite(dur) && dur > 0){
+    pb.timeCur.textContent = fmtTime(ljPlayer.currentTime);
+    pb.timeDur.textContent = fmtTime(dur);
+    pb.scrub.value = String(Math.round((ljPlayer.currentTime / dur) * 1000));
+  } else {
+    pb.timeCur.textContent = fmtTime(ljPlayer.currentTime);
+    pb.timeDur.textContent = "0:00";
+    pb.scrub.value = "0";
+  }
+}
+function setPlayerTitle(ayahNum){
+  if (!SURAH_META) return;
+  pb.title.textContent = `${SURAH_META.number}. ${SURAH_META.englishName}`;
+  pb.sub.textContent = `Vers ${ayahNum} av ${SURAH_META.numberOfAyahs} · ${RECITER_LABEL}`;
+}
+function makeMasterPlayButton(){
+  const wrap = window.el("button", {
+    class: "surah-play",
+    type: "button",
+    title: "Spela upp hela suran",
+    "aria-label": "Spela upp hela suran"
+  });
+  wrap.innerHTML = PLAY_ICON;
+  return wrap;
+}
+
+/* ============================================================
+   Fallback: cdn.islamic.network CDN (no timestamps)
+   ============================================================ */
+function fullSurahAudioUrl(reciterSlug, surahNumber){
+  return `https://cdn.islamic.network/quran/audio-surah/128/${reciterSlug}/${surahNumber}.mp3`;
+}
+
+/* ============================================================
+   TRUE SOURCE OF TRUTH:
+   Fetch audio URL + timestamps from the SAME Quran.com endpoint,
+   so the timestamps definitely align with the file we play.
+   ============================================================ */
+const QF_CHAPTER_RECITER_IDS = {
+  "ar.alafasy":             7,
+  "ar.abdulbasitmurattal":  2,
+  "ar.abdurrahmaansudais":  3,
+  "ar.husary":              6,
+  "ar.minshawi":            9,
+  "ar.shaatree":            4,
+  "ar.hudhaify":            5,
+  "ar.muhammadayyoub":      1
+};
+
+function normalizeAudioUrl(u){
+  if (!u) return "";
+  if (u.startsWith("//")) return "https:" + u;
+  if (u.startsWith("/"))  return "https://verses.quran.com" + u;
+  if (!/^https?:/i.test(u)) return "https://verses.quran.com/" + u.replace(/^\/+/, "");
+  return u;
+}
+
+async function fetchChapterAudioAndTimestamps(reciterSlug, surahNumber){
+  const reciterId = QF_CHAPTER_RECITER_IDS[reciterSlug];
+  if (!reciterId) return null;
+  try {
+    const url = `https://api.quran.com/api/v4/chapter_recitations/${reciterId}/${surahNumber}`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const file = data.audio_file;
+    if (!file || !file.audio_url) return null;
+
+    const audioUrl = normalizeAudioUrl(file.audio_url);
+    const ts = Array.isArray(file.timestamps) ? file.timestamps : [];
+    const timestamps = ts.map(t => ({ start: t.timestamp_from, end: t.timestamp_to }));
+
+    return { audioUrl, timestamps: timestamps.length ? timestamps : null };
+  } catch { return null; }
+}
+
+/* Character-proportional fallback (only used if API fails completely) */
+let AYAH_CHAR_SHARES = [];
+function computeAyahShares(){
+  const counts = VERSES.map(v => Math.max(1, (v.plain || "").replace(/\s+/g, "").length));
+  const total = counts.reduce((a,b)=>a+b,0);
+  let acc = 0;
+  AYAH_CHAR_SHARES = counts.map(c => {
+    const start = acc / total;
+    acc += c;
+    return { start, end: acc / total };
+  });
+}
+
+let AYAH_TIMESTAMPS_MS = null;
+
+function ayahIndexFromMs(ms){
+  if (AYAH_TIMESTAMPS_MS && AYAH_TIMESTAMPS_MS.length){
+    for (let i = 0; i < AYAH_TIMESTAMPS_MS.length; i++){
+      const t = AYAH_TIMESTAMPS_MS[i];
+      if (ms >= t.start && ms < t.end) return i;
+    }
+    if (ms >= AYAH_TIMESTAMPS_MS[AYAH_TIMESTAMPS_MS.length - 1].end){
+      return AYAH_TIMESTAMPS_MS.length - 1;
+    }
+    return 0;
+  }
+  const dur = ljPlayer.duration;
+  if (!isFinite(dur) || dur <= 0) return 0;
+  const p = ms / (dur * 1000);
+  for (let i = 0; i < AYAH_CHAR_SHARES.length; i++){
+    const s = AYAH_CHAR_SHARES[i];
+    if (p >= s.start && p < s.end) return i;
+  }
+  return AYAH_CHAR_SHARES.length - 1;
+}
+
+function ayahStartMs(idx){
+  if (AYAH_TIMESTAMPS_MS && AYAH_TIMESTAMPS_MS[idx]) return AYAH_TIMESTAMPS_MS[idx].start;
+  const dur = ljPlayer.duration;
+  if (!isFinite(dur) || dur <= 0) return 0;
+  return AYAH_CHAR_SHARES[idx].start * dur * 1000;
+}
+
+/* ---------- Word-level highlight ---------- */
+let currentWordTimings = null;
+let currentWordBaseMs = 0;
+let currentWordEls = [];
+let lastWordIdx = -1;
+
+function resetWordState(){
+  currentWordTimings = null;
+  currentWordBaseMs = 0;
+  currentWordEls = [];
+  lastWordIdx = -1;
+  document.querySelectorAll(".ayah-ar .w.reciting").forEach(el => el.classList.remove("reciting"));
+}
+async function loadWordTimingsForAyah(ayahIndex, baseMs){
+  const v = VERSES[ayahIndex];
+  if (!v) return;
+  const myToken = playToken;
+  try {
+    const res = await window.Tajweed.getVerseTimings(RECITER_SLUG, SURAH_META.number, v.numberInSurah);
+    if (myToken !== playToken) return;
+    if (res && res.timings){
+      currentWordTimings = res.timings;
+      currentWordBaseMs = baseMs || 0;
+      currentWordEls = [...AYAH_ELS[ayahIndex].querySelectorAll(".ayah-ar .w")];
+    }
+  } catch {}
+}
+function updateWordHighlight(globalMs){
+  if (!currentWordTimings || !currentWordEls.length) return;
+  const local = globalMs - currentWordBaseMs - TIMING_OFFSET_MS;
+  let idx = -1;
+  for (const seg of currentWordTimings){
+    if (local >= seg.start && local < seg.end){ idx = seg.index - 1; break; }
+  }
+  if (idx < 0 && local >= currentWordTimings[currentWordTimings.length-1].end){
+    idx = currentWordEls.length - 1;
+  }
+  if (idx >= 0 && idx !== lastWordIdx && idx < currentWordEls.length){
+    if (lastWordIdx >= 0 && currentWordEls[lastWordIdx]) currentWordEls[lastWordIdx].classList.remove("reciting");
+    currentWordEls[idx].classList.add("reciting");
+    lastWordIdx = idx;
+  }
+}
+
+/* ============================================================
+   MASTER FULL-SURAH PLAYBACK
+   ============================================================ */
+async function playFullSurah(){
+  if (!VERSES.length) return;
+  playToken++;
+  const myToken = playToken;
+  resetWordState();
+  AYAH_ELS.forEach(el => el.classList.remove("is-playing"));
+  computeAyahShares();
+  fullSurahActive = true;
+  autoAdvance = true;
+  currentAyahIndex = -1;
+  showPlayerBar();
+  pb.toggle.innerHTML = PAUSE_ICON;
+
+  /* Fetch audio URL + timestamps from the SAME source. */
+  AYAH_TIMESTAMPS_MS = null;
+  let playUrl = null;
+  try {
+    const info = await fetchChapterAudioAndTimestamps(RECITER_SLUG, SURAH_META.number);
+    if (myToken !== playToken) return;
+    if (info){
+      playUrl = info.audioUrl;
+      AYAH_TIMESTAMPS_MS = info.timestamps;
+    }
+  } catch {}
+
+  // Fallback only if the API returned nothing at all.
+  if (!playUrl){
+    playUrl = fullSurahAudioUrl(RECITER_SLUG, SURAH_META.number);
+    AYAH_TIMESTAMPS_MS = null;
+  }
+
+  /* Set up audio */
+  ljPlayer.pause();
+  ljPlayer.src = playUrl;
+  ljPlayer.playbackRate = SPEEDS[speedIdx];
+  ljPlayer.currentTime = 0;
+
+  const onTimeUpdate = ()=>{
+    if (myToken !== playToken) return;
+    updatePlayerBarFromAudio();
+    const dur = ljPlayer.duration;
+    if (!isFinite(dur) || dur <= 0) return;
+    const ms = ljPlayer.currentTime * 1000;
+    const idx = ayahIndexFromMs(ms);
+
+    if (idx !== currentAyahIndex){
+      if (currentAyahIndex >= 0 && AYAH_ELS[currentAyahIndex]) AYAH_ELS[currentAyahIndex].classList.remove("is-playing");
+      currentAyahIndex = idx;
+      const el = AYAH_ELS[idx];
+      if (el){ el.classList.add("is-playing"); el.scrollIntoView({ behavior: "smooth", block: "center" }); }
+      setPlayerTitle(VERSES[idx].numberInSurah);
+      resetWordState();
+      loadWordTimingsForAyah(idx, ayahStartMs(idx));
+    }
+    updateWordHighlight(ms);
+  };
+
+  const finish = ()=>{
+    ljPlayer.removeEventListener("timeupdate", onTimeUpdate);
+    ljPlayer.removeEventListener("ended", onEnded);
+    ljPlayer.removeEventListener("error", onEnded);
+    resetWordState();
+    AYAH_ELS.forEach(el => el.classList.remove("is-playing"));
+    currentAyahIndex = -1;
+    fullSurahActive = false;
+    autoAdvance = false;
+    pb.toggle.innerHTML = PLAY_BIG;
+    if (masterBtn) masterBtn.innerHTML = PLAY_ICON;
+  };
+  const onEnded = ()=>{ finish(); };
+
+  ljPlayer.addEventListener("timeupdate", onTimeUpdate);
+  ljPlayer.addEventListener("ended", onEnded);
+  ljPlayer.addEventListener("error", onEnded);
+
+  try {
+    await ljPlayer.play();
+    updatePlayerBarFromAudio();
+    onTimeUpdate();
+  } catch (err){
+    console.warn("Full-surah playback failed:", err, "URL:", playUrl);
+    finish();
+  }
+}
+
+function stopFullSurah(){
+  playToken++;
+  fullSurahActive = false;
+  autoAdvance = false;
+  ljPlayer.pause();
+  resetWordState();
+  AYAH_ELS.forEach(el => el.classList.remove("is-playing"));
+  currentAyahIndex = -1;
+  pb.toggle.innerHTML = PLAY_BIG;
+  if (masterBtn) masterBtn.innerHTML = PLAY_ICON;
+}
+
+/* ============================================================
+   SINGLE-AYAH PLAYBACK
+   ============================================================ */
+function stopVersePlayback(){
+  playToken++;
+  autoAdvance = false;
+  if (currentVerseCleanup){ currentVerseCleanup(); currentVerseCleanup = null; }
+  if (currentVerseBtn){ currentVerseBtn.innerHTML = PLAY_ICON; currentVerseBtn = null; }
+  document.querySelectorAll(".ayah-ar .w.reciting").forEach(el => el.classList.remove("reciting"));
+  document.querySelectorAll(".ayah.is-playing").forEach(el => el.classList.remove("is-playing"));
+}
+
+async function playAyahByIndex(verseIndex, opts){
+  opts = opts || {};
+  const btn = opts.btn || null;
+  if (verseIndex < 0 || verseIndex >= VERSES.length) return;
+  stopVersePlayback();
+  currentAyahIndex = verseIndex;
+  const v = VERSES[verseIndex];
+  const ayahEl = AYAH_ELS[verseIndex];
+  if (!ayahEl) return;
+  const surah = SURAH_META.number;
+  const ayahNum = v.numberInSurah;
+  const words = [...ayahEl.querySelectorAll(".ayah-ar .w")];
+  const totalWords = words.length;
+  const myToken = ++playToken;
+  if (btn) btn.innerHTML = STOP_ICON;
+  currentVerseBtn = btn || null;
+  showPlayerBar();
+  setPlayerTitle(ayahNum);
+  pb.toggle.innerHTML = PAUSE_ICON;
+
+  let res = null;
+  try { res = await window.Tajweed.getVerseTimings(RECITER_SLUG, surah, ayahNum); } catch {}
+  if (myToken !== playToken) return;
+
+  const g = globalAyahNumber(surah, ayahNum);
+  const fallbackUrl = window.Tajweed.ayahAudioUrl(RECITER_SLUG, g);
+  const playUrl = (res && res.audioUrl) || fallbackUrl;
+  const timings = res ? res.timings : null;
+
+  let lastIdx = -1;
+  let finished = false;
+  const clearHighlight = ()=>{ words.forEach(w => w.classList.remove("reciting")); lastIdx = -1; };
+  const findWordByTime = (ms)=>{
+    const t = ms - TIMING_OFFSET_MS;
+    if (timings && timings.length){
+      for (const seg of timings){ if (t >= seg.start && t < seg.end) return seg.index - 1; }
+      if (t >= timings[timings.length - 1].end) return totalWords - 1;
+      return -1;
+    }
+    const dur = ljPlayer.duration;
+    if (!dur || !isFinite(dur)) return -1;
+    return Math.min(totalWords - 1, Math.max(0, Math.floor(((t / 1000) / dur) * totalWords)));
+  };
+  const onTimeUpdate = ()=>{
+    if (finished) return;
+    updatePlayerBarFromAudio();
+    const idx = findWordByTime(ljPlayer.currentTime * 1000);
+    if (idx >= 0 && idx !== lastIdx && idx < totalWords){
+      if (lastIdx >= 0 && words[lastIdx]) words[lastIdx].classList.remove("reciting");
+      words[idx].classList.add("reciting");
+      lastIdx = idx;
+    }
+  };
+  const finish = ()=>{
+    if (finished) return;
+    finished = true;
+    ljPlayer.removeEventListener("timeupdate", onTimeUpdate);
+    ljPlayer.removeEventListener("ended", finish);
+    ljPlayer.removeEventListener("error", finish);
+    ljPlayer.removeEventListener("loadedmetadata", updatePlayerBarFromAudio);
+    clearHighlight();
+    if (currentVerseBtn === btn) btn.innerHTML = PLAY_ICON;
+    if (currentVerseBtn === btn) currentVerseBtn = null;
+    if (currentVerseCleanup === cleanup) currentVerseCleanup = null;
+    ayahEl.classList.remove("is-playing");
+    pb.toggle.innerHTML = PLAY_BIG;
+  };
+  const cleanup = ()=>{
+    finished = true;
+    ljPlayer.removeEventListener("timeupdate", onTimeUpdate);
+    ljPlayer.removeEventListener("ended", finish);
+    ljPlayer.removeEventListener("error", finish);
+    ljPlayer.removeEventListener("loadedmetadata", updatePlayerBarFromAudio);
+    ljPlayer.pause();
+    clearHighlight();
+    ayahEl.classList.remove("is-playing");
+  };
+  ljPlayer.pause();
+  ljPlayer.src = playUrl;
+  ljPlayer.playbackRate = SPEEDS[speedIdx];
+  ljPlayer.addEventListener("timeupdate", onTimeUpdate);
+  ljPlayer.addEventListener("loadedmetadata", updatePlayerBarFromAudio);
+  ljPlayer.addEventListener("ended", finish);
+  ljPlayer.addEventListener("error", finish);
+  currentVerseCleanup = cleanup;
+  ayahEl.classList.add("is-playing");
+  ljPlayer.play().then(()=>{ onTimeUpdate(); ayahEl.scrollIntoView({ behavior: "smooth", block: "center" }); })
+    .catch((err)=>{ console.warn("Verse playback failed:", err); finish(); });
+}
+
+/* ============================================================
+   Player-bar wiring
+   ============================================================ */
+pb.toggle.addEventListener("click", ()=>{ if (ljPlayer.paused) ljPlayer.play().catch(()=>{}); else ljPlayer.pause(); });
+ljPlayer.addEventListener("play", ()=>{ pb.toggle.innerHTML = PAUSE_ICON; });
+ljPlayer.addEventListener("pause", ()=>{ pb.toggle.innerHTML = PLAY_BIG; });
+pb.prev.addEventListener("click", ()=>{
+  const prev = Math.max(0, currentAyahIndex - 1);
+  if (fullSurahActive && AYAH_TIMESTAMPS_MS){
+    ljPlayer.currentTime = ayahStartMs(prev) / 1000;
+  } else if (prev !== currentAyahIndex){
+    playAyahByIndex(prev, { btn: null });
+  } else {
+    ljPlayer.currentTime = 0;
+  }
+});
+pb.next.addEventListener("click", ()=>{
+  const next = Math.min(VERSES.length - 1, currentAyahIndex + 1);
+  if (fullSurahActive && AYAH_TIMESTAMPS_MS){
+    ljPlayer.currentTime = ayahStartMs(next) / 1000;
+  } else if (next !== currentAyahIndex){
+    playAyahByIndex(next, { btn: null });
+  }
+});
+pb.scrub.addEventListener("input", ()=>{
+  const dur = ljPlayer.duration;
+  if (isFinite(dur) && dur > 0) ljPlayer.currentTime = (Number(pb.scrub.value) / 1000) * dur;
+});
+pb.speed.addEventListener("click", ()=>{
+  speedIdx = (speedIdx + 1) % SPEEDS.length;
+  const s = SPEEDS[speedIdx];
+  ljPlayer.playbackRate = s;
+  pb.speedLabel.textContent = (s === 1 ? "1.0" : s.toFixed(2).replace(/0$/, "")) + "×";
+});
+pb.vol.addEventListener("click", ()=>{ ljPlayer.muted = !ljPlayer.muted; pb.vol.classList.toggle("muted", ljPlayer.muted); });
+pb.close.addEventListener("click", ()=>{ stopVersePlayback(); stopFullSurah(); ljPlayer.pause(); hidePlayerBar(); });
+document.addEventListener("keydown", (ev)=>{
+  if (ev.target && /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName)) return;
+  if (pb.root.hidden) return;
+  if (ev.code === "Space"){ ev.preventDefault(); pb.toggle.click(); }
+  else if (ev.code === "ArrowLeft"){ pb.prev.click(); }
+  else if (ev.code === "ArrowRight"){ pb.next.click(); }
+});
+
+/* ============================================================
+   Click-to-hear-a-word
+   ============================================================ */
+document.addEventListener("click", (ev)=>{
+  const w = ev.target.closest(".ayah-ar .w");
+  if (!w) return;
+  if (ev.target.closest("a,button")) return;
+
+  stopVersePlayback();
+  stopFullSurah();
+  hidePlayerBar();
+
+  const ayahEl = w.closest(".ayah");
+  if (!ayahEl) return;
+  const surah = Number(ayahEl.dataset.surah);
+  const ayah  = Number(ayahEl.dataset.ayah);
+  const word  = Number(w.dataset.w);
+  if (!surah || !ayah || !word) return;
+
+  let url = "";
+  try {
+    const map = JSON.parse(ayahEl.dataset.wordAudios || "[]");
+    url = map[word - 1] ? window.Tajweed.wordAudioUrlFromApi(map[word - 1]) : "";
+  } catch {}
+  if (!url) url = window.Tajweed.wordAudioUrl(surah, ayah, word);
+
+  ljPlayer.pause();
+  ljPlayer.src = url;
+  ljPlayer.play().catch((err)=> console.warn("Word audio failed:", url, err));
+  w.classList.add("playing");
+  setTimeout(()=> w.classList.remove("playing"), 900);
+});
+
+/* ---------- Main renderer ---------- */
+(async function(){
+  const num = window.surahNumberFromQuery(1);
+  const head = document.getElementById("head");
+  const ayahsEl = document.getElementById("ayahs");
+  const pager = document.getElementById("pager");
+  const settings = window.LJ.getSettings();
+  RECITER_SLUG = settings.qari;
+
+  try {
+    let verses = [];
+    let meta = {};
+    let basmala = null;
+
+    if (settings.tajweedEnabled){
+      const data = await window.Tajweed.getSurahWithTajweed(num);
+      verses = data.verses;
+      const metaJson = await fetch(`https://api.alquran.cloud/v1/surah/${num}`).then(r => r.json());
+      meta = metaJson.data;
+    } else {
+      const { ar, sv } = await window.getSurahBilingual(num);
+      meta = ar;
+      verses = ar.ayahs.map((a, i) => ({
+        numberInSurah: a.numberInSurah,
+        tajweedHtml: null,
+        plain: a.text,
+        wordAudios: [],
+        sv: sv.ayahs[i] ? sv.ayahs[i].text : ""
+      }));
+      if (num !== 1 && verses[0]){
+        const src = verses[0].plain || "";
+        const { basmala: b, rest } = window.stripLeadingBasmala(src);
+        if (b){ basmala = b; verses[0].plain = rest; }
+      }
+    }
+
+    SURAH_META = meta;
+    VERSES = verses;
+    RECITER_LABEL = (window.LJ.QARIS.find(q => q.id === RECITER_SLUG) || {}).name || RECITER_SLUG;
+
+    head.innerHTML = "";
+    const h1 = window.el("h1", {});
+    h1.appendChild(window.el("span", {}, `${num}. ${meta.englishName || ""}`));
+    masterBtn = makeMasterPlayButton();
+    h1.appendChild(masterBtn);
+    head.appendChild(h1);
+    head.appendChild(window.el("p", { class: "lede arabic" }, meta.name || ""));
+    head.appendChild(window.el("p", { class: "lede" },
+      `${(window.SURAH_SV && window.SURAH_SV[num]) || meta.englishNameTranslation || ""} · ${meta.numberOfAyahs} verser · ${meta.revelationType === "Meccan" ? "meckansk" : "medinensisk"}`));
+
+    masterBtn.addEventListener("click", ()=>{
+      if (fullSurahActive){ stopFullSurah(); ljPlayer.pause(); }
+      else { stopVersePlayback(); masterBtn.innerHTML = STOP_ICON; playFullSurah(); }
+    });
+
+    ayahsEl.innerHTML = "";
+    AYAH_ELS = [];
+    if (basmala){
+      ayahsEl.appendChild(window.el("div", { class: "basmala", lang: "ar", dir: "rtl" }, basmala));
+    }
+
+    verses.forEach((v, i) => {
+      const arabicNode = window.el("div", { class: "ayah-ar", lang: "ar", dir: "rtl" });
+      if (v.tajweedHtml){
+        arabicNode.classList.add("tajweed");
+        arabicNode.innerHTML = v.tajweedHtml;
+      } else {
+        arabicNode.innerHTML = window.Tajweed.tajweedToHtml(v.plain || "", v.numberInSurah);
+      }
+
+      const playBtn = window.el("button", {
+        class: "ayah-play",
+        type: "button",
+        title: "Spela upp versen (qari)",
+        "aria-label": "Spela upp versen (qari)"
+      });
+      playBtn.innerHTML = PLAY_ICON;
+
+      const inner = [arabicNode];
+      if (settings.showTranslation) inner.push(window.el("div", { class: "ayah-sv" }, v.sv || ""));
+      const tools = window.el("div", { class: "ayah-tools" }, [
+        playBtn,
+        window.el("a", { class: "ayah-link", href: `tafsir.html?sura=${num}&aya=${v.numberInSurah}` }, "Tafsir →")
+      ]);
+      inner.push(tools);
+
+      const block = window.el("div", {
+        class: "ayah",
+        "data-surah": String(num),
+        "data-ayah": String(v.numberInSurah),
+        "data-word-audios": JSON.stringify(v.wordAudios || [])
+      }, [
+        window.el("div", { class: "ayah-badge" }, String(v.numberInSurah)),
+        window.el("div", { class: "ayah-body" }, inner)
+      ]);
+      ayahsEl.appendChild(block);
+      AYAH_ELS.push(block);
+
+      playBtn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        if (fullSurahActive) stopFullSurah();
+        if (currentVerseBtn === playBtn){
+          stopVersePlayback();
+          ljPlayer.pause();
+          if (masterBtn) masterBtn.innerHTML = PLAY_ICON;
+          pb.toggle.innerHTML = PLAY_BIG;
+          return;
+        }
+        if (masterBtn) masterBtn.innerHTML = PLAY_ICON;
+        playAyahByIndex(i, { btn: playBtn });
+      });
+    });
+
+    pager.innerHTML = "";
+    if (num > 1) pager.appendChild(window.el("a", { class: "btn btn-ghost", href: `sura.html?sura=${num - 1}` }, "← Föregående sura"));
+    else pager.appendChild(window.el("span", {}, ""));
+    if (num < 114) pager.appendChild(window.el("a", { class: "btn btn-ghost", href: `sura.html?sura=${num + 1}` }, "Nästa sura →"));
+
+  } catch (err){
+    console.error(err);
+    head.innerHTML = `<p class="notice">Kunde inte hämta suran just nu (${err.message}). Kontrollera din internetanslutning och ladda om sidan.</p>`;
+  }
+})();
+</script>
+</body>
+</html>

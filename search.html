@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sök i Koranen | Ljuskällan</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <nav class="main-nav">
+      <a href="index.html">Hem</a>
+      <a href="quran.html">Koranen</a>
+      <a href="tajwid.html">Tajwid</a>
+      <a href="om.html">Om sidan</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wide">
+
+  <header class="page-head">
+    <h1>Sök i Koranen</h1>
+    <p class="lede">Sök på ett ord eller en fras i den arabiska texten eller i
+      Bernströms svenska tolkning. Du kan också ange en hänvisning som
+      <code>2:255</code> för att gå direkt till en vers.</p>
+  </header>
+
+  <form class="search-bar" id="search-form" role="search" action="search.html" method="get">
+    <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/>
+    </svg>
+    <input id="search-q" name="q" type="search"
+           placeholder="Ord, fras eller sura:vers — t.ex. barmhärtighet eller 2:255"
+           autocomplete="off" autofocus>
+    <button type="submit">Sök</button>
+  </form>
+
+  <section id="search-status" aria-live="polite"></section>
+  <section id="search-results"></section>
+
+</main>
+
+<footer>
+  <p>Sökningen använder <a href="https://alquran.cloud" rel="noopener">alquran.cloud</a>:s öppna API.</p>
+</footer>
+
+<script src="js/surah-data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/search.js"></script>
+<script>
+(async function(){
+  const form     = document.getElementById("search-form");
+  const input    = document.getElementById("search-q");
+  const statusEl = document.getElementById("search-status");
+  const results  = document.getElementById("search-results");
+
+  function getQ(){
+    const p = new URLSearchParams(location.search);
+    return (p.get("q") || "").trim();
+  }
+
+  async function run(q){
+    if(!q){
+      statusEl.innerHTML = "";
+      results.innerHTML = "";
+      return;
+    }
+    input.value = q;
+    statusEl.innerHTML = `<p class="loading">Söker efter "${escapeHtml(q)}" …</p>`;
+    results.innerHTML = "";
+
+    try{
+      const { matches, ref, error } = await searchQuran(q);
+      if(error){
+        statusEl.innerHTML = `<p class="notice">Sökningen misslyckades: ${escapeHtml(error)}</p>`;
+        return;
+      }
+      if(!matches.length){
+        statusEl.innerHTML = `<p class="notice">Inga träffar för "${escapeHtml(q)}". Prova ett annat ord eller en hänvisning som <code>2:255</code>.</p>`;
+        return;
+      }
+
+      statusEl.innerHTML = "";
+      if(ref){
+        statusEl.appendChild(el("p", { class: "search-summary" },
+          `Visar vers ${ref.sura}:${ref.ayah}.`));
+      } else {
+        statusEl.appendChild(el("p", { class: "search-summary" },
+          `${matches.length} ${matches.length === 1 ? "träff" : "träffar"} för "${q}".`));
+      }
+
+      const list = el("ul", { class: "search-list" });
+      matches.forEach(m => list.appendChild(renderMatch(m, q)));
+      results.appendChild(list);
+    }catch(err){
+      statusEl.innerHTML = `<p class="notice">Sökningen misslyckades: ${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  function renderMatch(m, q){
+    const title = el("h3", { class: "search-match-h" });
+    const link  = el("a", {
+      href: `sura.html?sura=${m.sura}#ayah-${m.ayah}`
+    }, [
+      `${m.sura}. ${m.suraNameSv || m.suraName} — vers ${m.ayah}`
+    ]);
+    title.appendChild(link);
+
+    const ar = el("p", {
+      class: "search-match-ar arabic",
+      lang: "ar", dir: "rtl"
+    });
+    ar.innerHTML = highlightMatch(m.ar, q);
+
+    const sv = el("p", { class: "search-match-sv" });
+    sv.innerHTML = highlightMatch(m.sv, q);
+
+    const foot = el("p", { class: "search-match-foot" }, [
+      el("a", { href: `tafsir.html?sura=${m.sura}&aya=${m.ayah}` },
+        "Läs tafsir för denna vers →")
+    ]);
+
+    return el("li", { class: "search-match" }, [title, ar, sv, foot]);
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[c]);
+  }
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const q = input.value.trim();
+    const url = new URL(location.href);
+    if(q) url.searchParams.set("q", q); else url.searchParams.delete("q");
+    history.pushState(null, "", url);
+    run(q);
+  });
+
+  window.addEventListener("popstate", () => run(getQ()));
+
+  run(getQ());
+})();
+</script>
+</body>
+</html>

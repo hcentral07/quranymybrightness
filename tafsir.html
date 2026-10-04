@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tafsir | Ljuskällan</title>
+  <meta name="description" content="Tafsir — klassisk och modern korankommentar, vers för vers. Välj bland över hundra utgåvor.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <nav class="main-nav">
+      <a href="index.html">Hem</a>
+      <a href="quran.html" class="current">Koranen</a>
+      <a href="tajwid.html">Tajwid</a>
+      <a href="om.html">Om sidan</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <article id="verse">
+    <p class="loading">Hämtar vers …</p>
+  </article>
+
+  <section class="tafsir-picker" id="picker" aria-labelledby="picker-h">
+    <header class="picker-head">
+      <h2 id="picker-h">Välj tafsir</h2>
+      <p class="picker-hint">
+        Utvalda utgåvor visas först. Klicka på <em>Visa alla utgåvor</em> för
+        att se hela listan med över hundra klassiska och moderna kommentarer.
+      </p>
+    </header>
+
+    <div class="picker-featured" id="picker-featured">
+      <p class="loading">Hämtar utgåvor …</p>
+    </div>
+
+    <details class="picker-more" id="picker-more-wrap">
+      <summary id="picker-more-summary">Visa alla utgåvor …</summary>
+      <div class="picker-all" id="picker-all"></div>
+    </details>
+  </section>
+
+  <section id="panels" aria-live="polite"></section>
+
+  <nav class="pager" id="pager" aria-label="Versnavigering"></nav>
+</main>
+
+<footer>
+  <p>
+    Tafsirtexterna hämtas via det öppna projektet
+    <em>spa5k/tafsir_api</em>. al-Jalalayn (arabiska) hämtas via alquran.cloud.
+  </p>
+</footer>
+
+<script src="js/surah-data.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* =========================================================================
+   TAFSIR TEXT NORMALIZER
+   Turns bulk Arabic commentary into structured, readable HTML blocks.
+   ========================================================================= */
+function normalizeTafsir(raw) {
+  if (!raw) return null;
+
+  let text = String(raw);
+
+  // 1. Protect Quranic verses: ﴿...﴾ [Surah: ayah]  →  <span class="quran-verse">
+  text = text.replace(
+    /﴿([^﴾]+)﴾\s*\[([^\]]+)\]/g,
+    (_, ayah, ref) =>
+      `<span class="quran-verse" data-ref="${ref.trim()}">﴿${ayah.trim()}﴾</span>`
+  );
+
+  // 2. Protect footnotes: [[...]]  →  <span class="footnote">
+  text = text.replace(
+    /\[\[([^\]]+)\]\]/g,
+    (_, note) => `<span class="footnote">${note.trim()}</span>`
+  );
+
+  // 3. Normalize newlines
+  text = text.replace(/\r\n/g, "\n");
+
+  // 4. Split into logical blocks
+  const rawBlocks = text.split(/\n{2,}/);
+
+  // 5. Classify each block
+  const blocks = rawBlocks
+    .map(b => b.trim())
+    .filter(Boolean)
+    .map(block => {
+      const isHeading =
+        block.length < 90 &&
+        !/[.،؛]/.test(block) &&
+        !block.includes("﴿") &&
+        !block.includes("<span");
+
+      const isPoetry =
+        block.split("\n").length >= 2 &&
+        /\.{3}/.test(block) &&
+        !block.includes("﴿");
+
+      const isHadith =
+        /^(حدثنا|حدثني|أخبرنا|أخبرني|روى|رواه|قال|وقال|عن)\b/.test(block);
+
+      let tag = "p";
+      let className = "tafsir-paragraph";
+      if (isHeading) { tag = "h3"; className = "tafsir-heading"; }
+      else if (isPoetry) { tag = "blockquote"; className = "tafsir-poetry"; }
+      else if (isHadith) { className = "tafsir-hadith"; }
+
+      const inner = block.replace(/\n/g, "<br>");
+      return `<${tag} class="${className}">${inner}</${tag}>`;
+    });
+
+  return blocks.join("\n");
+}
+
+/* =========================================================================
+   PAGE BOOTSTRAP
+   ========================================================================= */
+(async function () {
+  const sura = surahNumberFromQuery(1);
+  const aya  = ayahNumberFromQuery(1);
+  const requestedSlug = tafsirSlugFromQuery(TAFSIR_DEFAULT_SLUG);
+
+  const verseEl        = document.getElementById("verse");
+  const featuredEl     = document.getElementById("picker-featured");
+  const allEl          = document.getElementById("picker-all");
+  const moreWrapEl     = document.getElementById("picker-more-wrap");
+  const moreSummaryEl  = document.getElementById("picker-more-summary");
+  const panelsEl       = document.getElementById("panels");
+  const pagerEl        = document.getElementById("pager");
+
+  let activeSlug = requestedSlug;
+  let editions = [];      // merged list of editions to show
+  let loading = false;
+
+  /* ---------- Verse header ---------- */
+  try {
+    const { ar, sv } = await getAyahBilingual(sura, aya);
+
+    verseEl.innerHTML = "";
+
+    const heading = el("h1", {}, `${ar.surah.englishName} ${sura}:${aya}`);
+    const arabic  = el("p", { class: "ayah-ar", lang: "ar", dir: "rtl" }, ar.text);
+    const swedish = el("p", { class: "ayah-sv", lang: "sv" }, sv.text);
+    const back    = el("a", { href: `sura.html?sura=${sura}` }, "← Tillbaka till hela suran");
+
+    verseEl.append(heading, arabic, swedish, back);
+  } catch (err) {
+    verseEl.innerHTML = "";
+    verseEl.appendChild(
+      el("p", { class: "notice" }, `Kunde inte hämta versen (${err.message}).`)
+    );
+  }
+
+  /* ---------- Load editions ---------- */
+  try {
+    const dynamic = await loadTafsirEditions();
+
+    // Merge: curated list takes priority for labels; dynamic adds the rest.
+    const bySlug = new Map();
+    TAFSIR_EDITIONS.forEach(ed => bySlug.set(ed.slug, { ...ed }));
+    dynamic.forEach(ed => {
+      const slug = ed.slug || ed.identifier || ed.name;
+      if (!slug) return;
+      const curated = TAFSIR_BY_SLUG[slug];
+      if (curated) return; // already added
+      bySlug.set(slug, {
+        slug,
+        label:   ed.name || ed.englishName || slug,
+        labelAr: ed.name || ed.englishName || slug,
+        lang:    (ed.language || "").startsWith("ar") ? "ar"
+               : (ed.language || "").startsWith("en") ? "en"
+               : "ar",
+        source:  "tafsir_api",
+        featured: false,
+      });
+    });
+
+    editions = Array.from(bySlug.values());
+
+    // Sort: featured first, then alphabetical
+    editions.sort((a, b) => {
+      if (a.featured !== b.featured) return a.featured ? -1 : 1;
+      return a.label.localeCompare(b.label, "sv");
+    });
+
+    renderPicker();
+
+    // If the URL requests a slug that isn't in the list, fall back
+    if (!editions.some(e => e.slug === activeSlug)) {
+      activeSlug = TAFSIR_DEFAULT_SLUG;
+    }
+
+    // Open the "more" fold if the active edition isn't featured
+    const activeEd = editions.find(e => e.slug === activeSlug);
+    if (activeEd && !activeEd.featured) {
+      moreWrapEl.open = true;
+    }
+
+    await showEdition(activeSlug);
+
+  } catch (err) {
+    featuredEl.innerHTML = "";
+    featuredEl.appendChild(
+      el("p", { class: "notice" },
+        `Kunde inte hämta listan över tafsirutgåvor (${err.message}).`)
+    );
+  }
+
+  /* ---------- Picker render ---------- */
+  function renderPicker() {
+    const featured = editions.filter(e => e.featured);
+    const rest     = editions.filter(e => !e.featured);
+
+    featuredEl.innerHTML = "";
+    allEl.innerHTML = "";
+
+    if (featured.length) {
+      const list = el("ul", { class: "edition-list featured" });
+      featured.forEach(ed => list.appendChild(renderEditionItem(ed)));
+      featuredEl.appendChild(list);
+    }
+
+    if (rest.length) {
+      const list = el("ul", { class: "edition-list" });
+      rest.forEach(ed => list.appendChild(renderEditionItem(ed)));
+      allEl.appendChild(list);
+      moreSummaryEl.textContent = `Visa alla utgåvor (${rest.length} fler) …`;
+    } else {
+      moreWrapEl.hidden = true;
+    }
+  }
+
+  function renderEditionItem(ed) {
+    const isArabic = ed.lang === "ar";
+    const btn = el("button", {
+      type: "button",
+      class: "edition-btn" + (ed.slug === activeSlug ? " active" : ""),
+      "data-slug": ed.slug,
+      "data-lang": ed.lang,
+      "aria-pressed": ed.slug === activeSlug ? "true" : "false",
+    });
+
+    const name = el("span", {
+      class: "edition-name" + (isArabic ? " arabic" : ""),
+      lang: isArabic ? "ar" : "sv",
+      dir: isArabic ? "rtl" : "ltr"
+    }, ed.labelAr || ed.label);
+
+    const sub = el("span", { class: "edition-sub" }, ed.label);
+    btn.append(name, sub);
+    btn.addEventListener("click", () => showEdition(ed.slug));
+    return el("li", { class: "edition-item" }, btn);
+  }
+
+  /* ---------- Show one edition ---------- */
+  async function showEdition(slug) {
+    if (loading) return;
+    loading = true;
+
+    activeSlug = slug;
+
+    // Update picker state
+    document.querySelectorAll(".edition-btn").forEach(b => {
+      const on = b.dataset.slug === slug;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+
+    // Update URL without reloading
+    const url = new URL(location.href);
+    url.searchParams.set("tafsir", slug);
+    history.replaceState(null, "", url);
+
+    // Render loading state
+    panelsEl.innerHTML = "";
+    const panel = el("article", {
+      class: "tafsir-panel active",
+      id: "panel-active",
+      role: "tabpanel"
+    }, el("p", { class: "loading" }, "Hämtar tafsir …"));
+    panelsEl.appendChild(panel);
+
+    const ed = editions.find(e => e.slug === slug) || TAFSIR_BY_SLUG[slug];
+
+    if (!ed) {
+      panel.innerHTML = "";
+      panel.appendChild(
+        el("p", { class: "notice" }, `Okänd utgåva: ${slug}.`)
+      );
+      loading = false;
+      return;
+    }
+
+    try {
+      const text = ed.source === "alquran"
+        ? await getJalalaynArabic(sura, aya)
+        : await getTafsir(ed.slug, sura, aya);
+
+      panel.innerHTML = "";
+
+      if (!text) {
+        panel.appendChild(
+          el("p", { class: "notice" },
+            `Ingen tafsir hittades för denna vers i ${ed.label}.`)
+        );
+      } else {
+        const body = el("div", ed.lang === "ar"
+          ? { class: "tafsir-body arabic", lang: "ar", dir: "rtl" }
+          : { class: "tafsir-body", lang: "sv" });
+
+        body.innerHTML = normalizeTafsir(text);
+        panel.appendChild(body);
+      }
+    } catch (err) {
+      panel.innerHTML = "";
+      panel.appendChild(
+        el("p", { class: "notice" },
+          `Kunde inte hämta ${ed.label} för denna vers just nu.`)
+      );
+    } finally {
+      loading = false;
+    }
+  }
+
+  /* ---------- Pager ---------- */
+  pagerEl.innerHTML = "";
+
+  if (aya > 1) {
+    pagerEl.appendChild(
+      el("a", {
+        class: "btn btn-ghost",
+        href: `tafsir.html?sura=${sura}&aya=${aya - 1}&tafsir=${activeSlug}`,
+        rel: "prev"
+      }, "← Föregående vers")
+    );
+  } else {
+    pagerEl.appendChild(el("span", { class: "btn btn-ghost disabled" }, "← Föregående vers"));
+  }
+
+  pagerEl.appendChild(
+    el("a", {
+      class: "btn btn-ghost",
+      href: `tafsir.html?sura=${sura}&aya=${aya + 1}&tafsir=${activeSlug}`,
+      rel: "next"
+    }, "Nästa vers →")
+  );
+})();
+</script>
+</body>
+</html>

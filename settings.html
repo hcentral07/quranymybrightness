@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inställningar | Ljuskällan</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="settings-page">
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <nav class="main-nav">
+      <a href="index.html">Hem</a>
+      <a href="quran.html">Koranen</a>
+      <a href="tajwid.html">Tajwid</a>
+      <a href="settings.html" class="current">Inställningar</a>
+      <a href="om.html">Om sidan</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-head">
+    <h1>Inställningar</h1>
+    <p class="lede">Konto, tajwid-visning, recitatör och läsupplevelse.</p>
+  </div>
+
+  <!-- Account -->
+  <section class="settings-card">
+    <div id="account-view"></div>
+  </section>
+
+  <!-- Tajwid -->
+  <section class="settings-card">
+    <h2>Tajwid</h2>
+    <p class="settings-hint">Färgkodar korantexten efter tajwid-regler (ikhfa, idgham, qalqala, madda m.fl.) med hjälp av Quran.com:s tajwid-annotering.</p>
+
+    <label class="settings-row">
+      <span class="settings-label">Visa tajwid-regler</span>
+      <input type="checkbox" id="opt-tajweed">
+    </label>
+
+    <div class="settings-field">
+      <label for="opt-palette">Färgpalett</label>
+      <select id="opt-palette">
+        <option value="classic">Klassisk (Quran.com)</option>
+        <option value="muted">Dämpad</option>
+        <option value="highcontrast">Hög kontrast</option>
+      </select>
+    </div>
+
+    <details class="legend-fold">
+      <summary>Visa teckenförklaring</summary>
+      <ul class="tajweed-legend" id="tajweed-legend"></ul>
+    </details>
+  </section>
+
+  <!-- Reciter -->
+  <section class="settings-card">
+    <h2>Recitatör (uppläsare)</h2>
+    <div class="settings-field">
+      <label for="opt-qari">Standard-recitatör</label>
+      <select id="opt-qari"></select>
+    </div>
+    <label class="settings-row">
+      <span class="settings-label">Automatisk uppspelning av nästa vers</span>
+      <input type="checkbox" id="opt-autoplay">
+    </label>
+  </section>
+
+  <!-- Reading -->
+  <section class="settings-card">
+    <h2>Läsupplevelse</h2>
+
+    <label class="settings-row">
+      <span class="settings-label">Visa svensk översättning</span>
+      <input type="checkbox" id="opt-translation">
+    </label>
+
+    <label class="settings-row">
+      <span class="settings-label">Visa translitterering</span>
+      <input type="checkbox" id="opt-translit">
+    </label>
+
+    <div class="settings-field">
+      <label for="opt-fontsize">Storlek på arabisk text: <span id="fontsize-val">100%</span></label>
+      <input type="range" id="opt-fontsize" min="80" max="180" step="5">
+    </div>
+
+    <div class="settings-field">
+      <label for="opt-theme">Tema</label>
+      <select id="opt-theme">
+        <option value="paper">Papper (ljust)</option>
+        <option value="night">Natt (mörkt)</option>
+      </select>
+    </div>
+  </section>
+
+  <div class="settings-actions">
+    <button class="btn btn-ghost" id="reset-settings">Återställ till standard</button>
+  </div>
+</main>
+
+<footer>
+  <p>Källa för tajwid-annotering: Quran.com API. Konton sparas lokalt i din webbläsare (demo).</p>
+</footer>
+
+<script src="js/settings.js"></script>
+<script>
+(function(){
+  const s = LJ.getSettings();
+
+  /* ---------- Populate qari select ---------- */
+  const qariSel = document.getElementById("opt-qari");
+  LJ.QARIS.forEach(q => {
+    const o = document.createElement("option");
+    o.value = q.id; o.textContent = q.name;
+    qariSel.appendChild(o);
+  });
+
+  /* ---------- Reflect current settings ---------- */
+  document.getElementById("opt-tajweed").checked     = s.tajweedEnabled;
+  document.getElementById("opt-palette").value       = s.tajweedPalette;
+  qariSel.value                                      = s.qari;
+  document.getElementById("opt-autoplay").checked    = s.reciterAutoplay;
+  document.getElementById("opt-translation").checked = s.showTranslation;
+  document.getElementById("opt-translit").checked    = s.showTransliteration;
+  document.getElementById("opt-theme").value         = s.theme;
+  const fs = document.getElementById("opt-fontsize");
+  fs.value = s.arabicFontSize;
+  document.getElementById("fontsize-val").textContent = s.arabicFontSize + "%";
+
+  /* ---------- Wire up ---------- */
+  document.getElementById("opt-tajweed").addEventListener("change", e =>
+    LJ.saveSettings({ tajweedEnabled: e.target.checked }));
+  document.getElementById("opt-palette").addEventListener("change", e =>
+    LJ.saveSettings({ tajweedPalette: e.target.value }));
+  qariSel.addEventListener("change", e =>
+    LJ.saveSettings({ qari: e.target.value }));
+  document.getElementById("opt-autoplay").addEventListener("change", e =>
+    LJ.saveSettings({ reciterAutoplay: e.target.checked }));
+  document.getElementById("opt-translation").addEventListener("change", e =>
+    LJ.saveSettings({ showTranslation: e.target.checked }));
+  document.getElementById("opt-translit").addEventListener("change", e =>
+    LJ.saveSettings({ showTransliteration: e.target.checked }));
+  document.getElementById("opt-theme").addEventListener("change", e =>
+    LJ.saveSettings({ theme: e.target.value }));
+  fs.addEventListener("input", e => {
+    document.getElementById("fontsize-val").textContent = e.target.value + "%";
+    LJ.saveSettings({ arabicFontSize: Number(e.target.value) });
+  });
+
+  document.getElementById("reset-settings").addEventListener("click", () => {
+    if (!confirm("Återställa alla inställningar till standard?")) return;
+    LJ.resetSettings();
+    location.reload();
+  });
+
+  /* ---------- Account UI ---------- */
+  const acc = document.getElementById("account-view");
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function renderAccount(){
+    const u = LJ.currentUser();
+    if (u){
+      acc.innerHTML = `
+        <h2>Konto</h2>
+        <p>Inloggad som <strong>${escapeHtml(u.name)}</strong> &lt;${escapeHtml(u.email)}&gt;</p>
+        <p class="settings-hint">Dina inställningar sparas automatiskt i den här webbläsaren.</p>
+        <button class="btn btn-ghost" id="logout-btn">Logga ut</button>
+      `;
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        LJ.logoutUser(); renderAccount();
+      });
+    } else {
+      acc.innerHTML = `
+        <h2>Logga in eller skapa konto</h2>
+        <p class="settings-hint">Kontot sparas endast lokalt i din webbläsare (demo, ingen server).</p>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">Logga in</button>
+          <button class="auth-tab" data-tab="register">Registrera</button>
+        </div>
+        <form id="auth-form" class="auth-form" autocomplete="on">
+          <div class="auth-field" data-only="register" hidden>
+            <label for="au-name">Namn</label>
+            <input id="au-name" type="text" autocomplete="name">
+          </div>
+          <div class="auth-field">
+            <label for="au-email">E-post</label>
+            <input id="au-email" type="email" required autocomplete="email">
+          </div>
+          <div class="auth-field">
+            <label for="au-pass">Lösenord</label>
+            <input id="au-pass" type="password" required minlength="6" autocomplete="current-password">
+          </div>
+          <p class="auth-error" id="au-error" hidden></p>
+          <button class="btn" type="submit" id="au-submit">Logga in</button>
+        </form>
+      `;
+      let mode = "login";
+      const nameField = acc.querySelector('[data-only="register"]');
+      const submit    = acc.querySelector("#au-submit");
+      const errEl     = acc.querySelector("#au-error");
+      const passEl    = acc.querySelector("#au-pass");
+
+      acc.querySelectorAll(".auth-tab").forEach(t => {
+        t.addEventListener("click", () => {
+          mode = t.dataset.tab;
+          acc.querySelectorAll(".auth-tab").forEach(x => x.classList.toggle("active", x === t));
+          nameField.hidden = mode !== "register";
+          submit.textContent = mode === "register" ? "Skapa konto" : "Logga in";
+          passEl.autocomplete = mode === "register" ? "new-password" : "current-password";
+          errEl.hidden = true;
+        });
+      });
+
+      acc.querySelector("#auth-form").addEventListener("submit", ev => {
+        ev.preventDefault();
+        errEl.hidden = true;
+        try {
+          if (mode === "register"){
+            LJ.registerUser(
+              acc.querySelector("#au-email").value,
+              acc.querySelector("#au-pass").value,
+              acc.querySelector("#au-name").value
+            );
+          } else {
+            LJ.loginUser(
+              acc.querySelector("#au-email").value,
+              acc.querySelector("#au-pass").value
+            );
+          }
+          renderAccount();
+        } catch (err){
+          errEl.textContent = err.message;
+          errEl.hidden = false;
+        }
+      });
+    }
+  }
+
+  /* ---------- Tajwid legend ---------- */
+  const LEGEND = [
+    ["ham_wasl",          "Hamzat al-wasl"],
+    ["laam_shamsiyah",    "Lām shamsiyyah"],
+    ["madda_normal",      "Madda (normal)"],
+    ["madda_permissible", "Madda (tillåten)"],
+    ["madda_necessary",   "Madda (nödvändig)"],
+    ["madda_obligatory",  "Madda (obligatorisk)"],
+    ["qalaqah",           "Qalqala"],
+    ["ikhafa",            "Ikhfā’"],
+    ["ikhafa_shafawi",    "Ikhfā’ shafawī"],
+    ["idgham_ghunnah",    "Idghām med ghunnah"],
+    ["idgham_wo_ghunnah", "Idghām utan ghunnah"],
+    ["idgham_shafawi",    "Idghām shafawī"],
+    ["iqlab",             "Iqlāb"],
+    ["tafkhim",           "Tafkhīm"],
+    ["silent",            "Tyst bokstav"]
+  ];
+  const ul = document.getElementById("tajweed-legend");
+  LEGEND.forEach(([cls, label]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="tj-sample rule-${cls}" lang="ar" dir="rtl">ـ</span> <span>${label}</span>`;
+    ul.appendChild(li);
+  });
+
+  renderAccount();
+})();
+</script>
+</body>
+</html>

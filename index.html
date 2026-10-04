@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ljuskällan — Koranen på svenska med tafsir och tajwid</title>
+<meta name="description" content="Koranens fullständiga text på arabiska och svenska, klassisk tafsir och tajwidlära, samlat på ett ställe.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="home">
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <nav class="main-nav">
+      <a href="index.html" class="current">Hem</a>
+      <a href="quran.html">Koranen</a>
+      <a href="tajwid.html">Tajwid</a>
+      <a href="om.html">Om sidan</a>
+    </nav>
+  </div>
+</header>
+
+<section class="home-hero" aria-labelledby="hero-h">
+  <div class="hero-stars" aria-hidden="true">
+    <i style="left:6%;  top:18%; animation-delay:0s;    animation-duration:5.4s"></i>
+    <i style="left:18%; top:72%; animation-delay:-1.2s; animation-duration:6.8s"></i>
+    <i style="left:34%; top:36%; animation-delay:-2.6s; animation-duration:5.0s"></i>
+    <i style="left:48%; top:84%; animation-delay:-0.8s; animation-duration:7.2s"></i>
+    <i style="left:62%; top:22%; animation-delay:-3.4s; animation-duration:6.0s"></i>
+    <i style="left:74%; top:66%; animation-delay:-1.8s; animation-duration:5.6s"></i>
+    <i style="left:88%; top:32%; animation-delay:-4.2s; animation-duration:6.4s"></i>
+    <i style="left:52%; top:12%; animation-delay:-2.0s; animation-duration:7.6s"></i>
+  </div>
+
+  <div class="home-hero-inner">
+    <div class="hero-logo" aria-hidden="true">
+      <span class="hero-ring hero-ring-1"></span>
+      <span class="hero-ring hero-ring-2"></span>
+
+      <span class="hero-orb orb-book">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.7 2v16h1.2V4H7.7zM14 2v9.2l1.5-1.3 1.5 1.3V2h-3z"/></svg>
+      </span>
+      <span class="hero-orb orb-tafsir">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M2.5 5.2C3.9 4.5 5.4 4.2 7 4.2c1.9 0 3.6.5 5 1.5 1.4-1 3.1-1.5 5-1.5 1.6 0 3.1.3 4.5 1v13.6c-1.4-.7-2.9-1-4.5-1-1.9 0-3.6.5-5 1.5-1.4-1-3.1-1.5-5-1.5-1.6 0-3.1.3-4.5 1V5.2zm8.9 1.4h1.2v12.2h-1.2V6.6z"/></svg>
+      </span>
+      <span class="hero-orb orb-audio">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M2 10v3M6 6v11M10 3v18M14 8v7M18 5v13M22 10v3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+      </span>
+      <span class="hero-orb orb-cards">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 3h11l3 3v15H5zm2 2v14h10V7h-2V5zm2 5h6v2H9zm0 4h6v2H9z"/></svg>
+      </span>
+      <span class="hero-orb orb-star">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5l2.9 6.1 6.6.9-4.8 4.7 1.2 6.6L12 17.6 6.1 20.8l1.2-6.6-4.8-4.7 6.6-.9z"/></svg>
+      </span>
+      <span class="hero-orb orb-leaf">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 4c-8 0-14 4-15.5 11.5-.4 2 .1 3.6.6 4.5.6-3.8 3.1-8.1 8.4-11.2-4 3.3-6 7-6.5 10.6 1.1.4 2.6.6 4.2.4C17.9 18.8 20 11.7 20 4z"/></svg>
+      </span>
+
+      <div class="hero-medal">
+        <div class="hero-medal-inner">
+          <svg class="hero-medal-orn" viewBox="0 0 64 64" aria-hidden="true">
+            <g fill="none" stroke="#d8a455" stroke-width="1.2">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+          </svg>
+          <div class="hero-medal-text">
+            <span class="hero-medal-ar arabic">الموسوعة</span>
+            <span class="hero-medal-sub">Ljuskällan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1 id="hero-h" class="home-hero-title">
+      Koranen på svenska — text, tafsir och tajwid
+    </h1>
+
+    <form class="home-search" role="search" action="search.html" method="get" autocomplete="off">
+      <label class="sr-only" for="home-q">Sök i Koranen</label>
+      <svg class="home-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/>
+      </svg>
+      <input id="home-q" name="q" type="search"
+             placeholder="Sök på ett ord, eller ange sura:vers — t.ex. 2:255"
+             aria-autocomplete="list"
+             aria-controls="home-search-panel"
+             aria-expanded="false">
+      <button type="submit" class="home-search-btn">Sök</button>
+      <div class="search-panel" id="home-search-panel" role="listbox" hidden></div>
+    </form>
+
+    <p class="home-hero-tag">
+      Koranens arabiska text och svenska tolkning, klassisk tafsir vers för vers,
+      tajwid och läran om recitation — fritt och öppet.
+    </p>
+
+    <nav class="home-cta" aria-label="Snabbval">
+      <a class="home-cta-btn primary" href="quran.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>
+        <span>Alla 114 suror</span>
+      </a>
+      <a class="home-cta-btn" href="sura.html?sura=1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.7 2v16h1.2V4H7.7zM14 2v9.2l1.5-1.3 1.5 1.3V2h-3z"/></svg>
+        <span>Läs surorna</span>
+      </a>
+      <a class="home-cta-btn" href="sura.html?sura=1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.5 5.2C3.9 4.5 5.4 4.2 7 4.2c1.9 0 3.6.5 5 1.5 1.4-1 3.1-1.5 5-1.5 1.6 0 3.1.3 4.5 1v13.6c-1.4-.7-2.9-1-4.5-1-1.9 0-3.6.5-5 1.5-1.4-1-3.1-1.5-5-1.5-1.6 0-3.1.3-4.5 1V5.2zm8.9 1.4h1.2v12.2h-1.2V6.6z"/></svg>
+        <span>Tafsir</span>
+      </a>
+      <a class="home-cta-btn" href="tajwid.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h4.2v16H3zm.9 2.4v1.1h2.4V5.4zm0 11v1.1h2.4v-1.1zM8.4 5.5h4v13.5h-4zm.8 2.2v1h2.4v-1zm0 8.6v1h2.4v-1zM13.8 5.2l3.9-1.1 4.2 14.9-3.9 1.1z"/><path fill="currentColor" d="M2 19.6h20v1.8H2z"/></svg>
+        <span>Tajwid</span>
+      </a>
+    </nav>
+
+  </div>
+</section>
+
+<main class="wide">
+
+  <section class="stats-row" aria-label="Innehåll i korthet">
+    <ul class="stats-list">
+      <li><a href="quran.html"><b>114</b><span>suror i Koranen</span></a></li>
+      <li><a href="quran.html"><b>6&nbsp;236</b><span>verser, arabiska och svenska</span></a></li>
+      <li><a href="sura.html?sura=1"><b>110+</b><span>tafsirutgåvor tillgängliga</span></a></li>
+      <li><a href="tajwid.html"><b>2</b><span>klassiska tajwidläroverk</span></a></li>
+    </ul>
+  </section>
+
+  <section class="doors-section" aria-labelledby="doors-h">
+    <header class="section-head">
+      <h2 id="doors-h">Var vill du börja?</h2>
+      <p class="section-sub">
+        Fyra ingångar till samma källa — läs Koranen, fördjupa dig i en vers,
+        studera tafsir eller lär dig recitera.
+      </p>
+    </header>
+
+    <ul class="doors">
+      <li>
+        <a class="door" href="quran.html">
+          <span class="door-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>
+          </span>
+          <span class="door-body">
+            <b>Koranen, sura för sura</b>
+            <em>114 suror · alla verser</em>
+            <span>Bläddra bland alla suror. Varje vers visas på arabiska och
+              svenska, med en direktlänk vidare till tafsir.</span>
+          </span>
+        </a>
+      </li>
+
+      <li>
+        <a class="door" href="sura.html?sura=1">
+          <span class="door-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.7 2v16h1.2V4H7.7zM14 2v9.2l1.5-1.3 1.5 1.3V2h-3z"/></svg>
+          </span>
+          <span class="door-body">
+            <b>Tafsir</b>
+            <em>110+ utgåvor</em>
+            <span>Klassisk och modern vers-för-vers-tolkning, från Ibn Kathir och
+              al-Tabari till al-Sa'di och al-Muyassar.</span>
+          </span>
+        </a>
+      </li>
+
+      <li>
+        <a class="door" href="tajwid.html">
+          <span class="door-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h4.2v16H3zm.9 2.4v1.1h2.4V5.4zm0 11v1.1h2.4v-1.1zM8.4 5.5h4v13.5h-4zm.8 2.2v1h2.4v-1zm0 8.6v1h2.4v-1zM13.8 5.2l3.9-1.1 4.2 14.9-3.9 1.1z"/><path fill="currentColor" d="M2 19.6h20v1.8H2z"/></svg>
+          </span>
+          <span class="door-body">
+            <b>Tajwid</b>
+            <em>2 klassiska läroverk</em>
+            <span>Grunderna i korrekt koranrecitation, strukturerat efter
+              <em>Tuhfat al-Atfal</em> och <em>al-Jazariyya</em> — med
+              fullständiga texter att läsa.</span>
+          </span>
+        </a>
+      </li>
+
+      <li>
+        <a class="door" href="om.html">
+          <span class="door-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+          </span>
+          <span class="door-body">
+            <b>Om sidan</b>
+            <em>Källor och licenser</em>
+            <span>Öppna källor, öppna licenser. Se vilka projekt texterna
+              kommer från och hur de används.</span>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section class="featured-section" aria-labelledby="featured-h">
+    <header class="section-head">
+      <h2 id="featured-h">Börja med en av dessa</h2>
+      <p class="section-sub">
+        Korta suror att bekanta sig med, eller <a href="quran.html">se alla 114</a>.
+      </p>
+    </header>
+
+    <ul class="featured-suras">
+      <li>
+        <a class="sura-h" href="sura.html?sura=1">
+          <svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <g fill="#d8a455">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle>
+            <circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle>
+          </svg>
+          <span>سورة الفاتحة</span>
+          <svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <g fill="#d8a455">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle>
+            <circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle>
+          </svg>
+        </a>
+        <div class="sura-body">
+          <span class="surah-num">1</span>
+          <span class="surah-names">
+            <span class="translit">al-Fatiha</span>
+            <span class="swedish">Öppningen · 7 verser</span>
+          </span>
+        </div>
+      </li>
+
+      <li>
+        <a class="sura-h" href="sura.html?sura=112">
+          <svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <g fill="#d8a455">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle>
+            <circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle>
+          </svg>
+          <span>سورة الإخلاص</span>
+          <svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <g fill="#d8a455">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle>
+            <circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle>
+          </svg>
+        </a>
+        <div class="sura-body">
+          <span class="surah-num">112</span>
+          <span class="surah-names">
+            <span class="translit">al-Ikhlas</span>
+            <span class="swedish">Den rena tron · 4 verser</span>
+          </span>
+        </div>
+      </li>
+
+      <li>
+        <a class="sura-h" href="sura.html?sura=36">
+          <svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <g fill="#d8a455">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle>
+            <circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle>
+          </svg>
+          <span>سورة يس</span>
+          <svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <g fill="#d8a455">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle>
+            <circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle>
+          </svg>
+        </a>
+        <div class="sura-body">
+          <span class="surah-num">36</span>
+          <span class="surah-names">
+            <span class="translit">Ya Sin</span>
+            <span class="swedish">Ya Sin · 83 verser</span>
+          </span>
+        </div>
+      </li>
+
+      <li>
+        <a class="sura-h" href="sura.html?sura=55">
+          <svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <g fill="#d8a455">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle>
+            <circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle>
+          </svg>
+          <span>سورة الرحمن</span>
+          <svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <g fill="#d8a455">
+              <rect x="15" y="15" width="34" height="34" rx="2"></rect>
+              <rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect>
+            </g>
+            <circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle>
+            <circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle>
+          </svg>
+        </a>
+        <div class="sura-body">
+          <span class="surah-num">55</span>
+          <span class="surah-names">
+            <span class="translit">ar-Rahman</span>
+            <span class="swedish">Den Nåderike · 78 verser</span>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="framed" aria-labelledby="om-sidan">
+    <h2 id="om-sidan">Vad hittar du här?</h2>
+
+    <dl class="feature-list">
+      <dt>Koranens text</dt>
+      <dd>
+        Den fullständiga arabiska Uthmani-texten, vers för vers, tillsammans med
+        Knut Bernströms svenska tolkning — den mest spridda fullständiga svenska
+        Korantolkningen.
+      </dd>
+
+      <dt>Tafsir</dt>
+      <dd>
+        Klassisk och modern kommentarlitteratur i över hundra utgåvor — från
+        Ibn Kathir, al-Tabari och al-Qurtubi till al-Sa'di, al-Muyassar och
+        Ibn Ashur. Varje utgåva förklarar versernas sammanhang, orsak till
+        uppenbarelse och juridiska eller språkliga poänger.
+      </dd>
+
+      <dt>Tajwid</dt>
+      <dd>
+        Reglerna för korrekt uttal och recitation, genomgångna utifrån strukturen
+        i de klassiska läroverken <em>Tuhfat al-Atfal</em> av al-Jamzuri och
+        <em>al-Muqaddimah al-Jazariyyah</em> av Ibn al-Jazari — med de
+        fullständiga texterna att läsa direkt på sidan.
+      </dd>
+    </dl>
+  </section>
+
+  <aside class="notice" role="note">
+    <strong>En ärlig notering:</strong>
+    tafsir-texterna på den här sidan hämtas från öppna källor som i dag bara
+    finns på arabiska eller engelska — det finns ännu ingen fri, öppet licensierad
+    svensk översättning av till exempel Ibn Kathirs tafsir.
+    Se <a href="om.html">Om sidan</a> för detaljer och källor.
+  </aside>
+
+</main>
+
+<footer>
+  <p>
+  Ljuskällan — Koranen på svenska - 2026
+  </p>
+</footer>
+
+<script src="js/surah-data.js"></script>
+<script>
+/* ============================================================
+   Live-sökpanel — robust mot CORS
+   ============================================================ */
+(function(){
+  const form  = document.querySelector(".home-search");
+  const input = document.getElementById("home-q");
+  const panel = document.getElementById("home-search-panel");
+  if(!form || !input || !panel) return;
+
+  const SURAH_TOTAL = 114;
+
+  const SURAH_ROMAN = {
+    1:"al-Fatiha", 2:"al-Baqara", 3:"al-Imran", 4:"an-Nisa",
+    5:"al-Ma'ida", 6:"al-An'am", 7:"al-A'raf", 8:"al-Anfal",
+    9:"at-Tawba", 10:"Yunus", 11:"Hud", 12:"Yusuf",
+    13:"ar-Ra'd", 14:"Ibrahim", 15:"al-Hijr", 16:"an-Nahl",
+    17:"al-Isra", 18:"al-Kahf", 19:"Maryam", 20:"Ta-Ha",
+    21:"al-Anbiya", 22:"al-Hajj", 23:"al-Mu'minun", 24:"an-Nur",
+    25:"al-Furqan", 26:"ash-Shu'ara", 27:"an-Naml", 28:"al-Qasas",
+    29:"al-Ankabut", 30:"ar-Rum", 31:"Luqman", 32:"as-Sajda",
+    33:"al-Ahzab", 34:"Saba", 35:"Fatir", 36:"Ya-Sin", 37:"as-Saffat",
+    38:"Sad", 39:"az-Zumar", 40:"Ghafir", 41:"Fussilat", 42:"ash-Shura",
+    43:"az-Zukhruf", 44:"ad-Dukhan", 45:"al-Jathiya", 46:"al-Ahqaf",
+    47:"Muhammad", 48:"al-Fath", 49:"al-Hujurat", 50:"Qaf",
+    51:"adh-Dhariyat", 52:"at-Tur", 53:"an-Najm", 54:"al-Qamar",
+    55:"ar-Rahman", 56:"al-Waqi'a", 57:"al-Hadid", 58:"al-Mujadila",
+    59:"al-Hashr", 60:"al-Mumtahana", 61:"as-Saff", 62:"al-Jumu'a",
+    63:"al-Munafiqun", 64:"at-Taghabun", 65:"at-Talaq", 66:"at-Tahrim",
+    67:"al-Mulk", 68:"al-Qalam", 69:"al-Haqqa", 70:"al-Ma'arij",
+    71:"Nuh", 72:"al-Jinn", 73:"al-Muzzammil", 74:"al-Muddaththir",
+    75:"al-Qiyama", 76:"al-Insan", 77:"al-Mursalat", 78:"an-Naba",
+    79:"an-Nazi'at", 80:"Abasa", 81:"at-Takwir", 82:"al-Infitar",
+    83:"al-Mutaffifin", 84:"al-Inshiqaq", 85:"al-Buruj", 86:"at-Tariq",
+    87:"al-A'la", 88:"al-Ghashiya", 89:"al-Fajr", 90:"al-Balad",
+    91:"ash-Shams", 92:"al-Lail", 93:"ad-Duha", 94:"ash-Sharh",
+    95:"at-Tin", 96:"al-Alaq", 97:"al-Qadr", 98:"al-Bayyina",
+    99:"az-Zalzala", 100:"al-Adiyat", 101:"al-Qari'a", 102:"at-Takathur",
+    103:"al-Asr", 104:"al-Humaza", 105:"al-Fil", 106:"Quraish",
+    107:"al-Ma'un", 108:"al-Kawthar", 109:"al-Kafirun", 110:"an-Nasr",
+    111:"al-Masad", 112:"al-Ikhlas", 113:"al-Falaq", 114:"an-Nas"
+  };
+
+  function parseRef(q){
+    const m = q.match(/^(\d{1,3})\s*[:.\s]\s*(\d{1,3})$/);
+    if(!m) return null;
+    const s = +m[1], a = +m[2];
+    return (s >= 1 && s <= SURAH_TOTAL && a >= 1) ? { sura: s, ayah: a } : null;
+  }
+
+  function matchSurahs(q){
+    const needle = q.toLowerCase().trim();
+    if(!needle) return [];
+
+    if(/^\d{1,3}$/.test(needle)){
+      const n = +needle;
+      if(n >= 1 && n <= SURAH_TOTAL){
+        return [{
+          type: "sura", sura: n,
+          label: `${n}. ${SURAH_ROMAN[n] || ""}`.trim(),
+          sub: SURAH_SV[n] || ""
+        }];
+      }
+    }
+
+    const out = [];
+    for(let n = 1; n <= SURAH_TOTAL; n++){
+      const roman = (SURAH_ROMAN[n] || "").toLowerCase();
+      const sv = (SURAH_SV[n] || "").toLowerCase();
+      if(roman.startsWith(needle) || roman.includes(needle) || sv.includes(needle)){
+        out.push({
+          type: "sura", sura: n,
+          label: `${n}. ${SURAH_ROMAN[n]}`,
+          sub: SURAH_SV[n] || ""
+        });
+      }
+      if(out.length >= 4) break;
+    }
+    return out;
+  }
+
+  async function tryJson(url){
+    try{
+      const r = await fetch(url, { mode: "cors" });
+      if(!r.ok) return null;
+      return await r.json();
+    }catch{ return null; }
+  }
+
+  async function fetchVerses(q){
+    // Minst 3 tecken — kortare frågor ger inga användbara träffar.
+    if(q.length < 3) return [];
+
+    const cleanQ = encodeURIComponent(q.trim());
+    // RÄTT URL: /search/{nyckelord}/all/{utgåva}
+    const direct = `https://api.alquran.cloud/v1/search/${cleanQ}/all/sv.bernstrom`;
+
+    let data = await tryJson(direct);
+    if(!data){
+      data = await tryJson(`https://corsproxy.io/?${encodeURIComponent(direct)}`);
+    }
+    if(!data){
+      data = await tryJson(`https://api.allorigins.win/raw?url=${encodeURIComponent(direct)}`);
+    }
+
+    if(!data || data.code !== 200 || !data.data) return [];
+
+    return (data.data.matches || []).slice(0, 6).map(m => ({
+      type: "verse",
+      sura: m.surah.number,
+      ayah: m.numberInSurah,
+      text: m.text,
+      roman: SURAH_ROMAN[m.surah.number] || m.surah.englishName,
+      sv: SURAH_SV[m.surah.number] || ""
+    }));
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+  }
+
+  function highlight(text, q){
+    const safe = esc(text);
+    if(!q) return safe;
+    const pat = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    try{
+      return safe.replace(new RegExp(`(${pat})`, "gi"), "<mark>$1</mark>");
+    }catch{ return safe; }
+  }
+
+  function sectionHead(txt){
+    const el = document.createElement("div");
+    el.className = "sp-head";
+    el.textContent = txt;
+    return el;
+  }
+
+  function suraRow(it, q){
+    const a = document.createElement("a");
+    a.className = "sp-row";
+    a.href = `sura.html?sura=${it.sura}`;
+    a.setAttribute("role", "option");
+    a.innerHTML = `
+      <span class="sp-ic" aria-hidden="true">§</span>
+      <span class="sp-tx">
+        <span class="sp-la">${highlight(it.label, q)}</span>
+        <span class="sp-su">${esc(it.sub)}</span>
+      </span>`;
+    return a;
+  }
+
+  function verseRow(it, q){
+    const a = document.createElement("a");
+    a.className = "sp-row";
+    a.href = `sura.html?sura=${it.sura}#ayah-${it.ayah}`;
+    a.setAttribute("role", "option");
+    a.innerHTML = `
+      <span class="sp-ic" aria-hidden="true">❝</span>
+      <span class="sp-tx">
+        <span class="sp-su">${it.sura}. ${esc(it.roman)} · vers ${it.ayah}</span>
+        <span class="sp-la">${highlight(it.text, q)}</span>
+      </span>`;
+    return a;
+  }
+
+  function refRow(it){
+    const a = document.createElement("a");
+    a.className = "sp-row";
+    a.href = `sura.html?sura=${it.sura}#ayah-${it.ayah}`;
+    a.setAttribute("role", "option");
+    a.innerHTML = `
+      <span class="sp-ic" aria-hidden="true">→</span>
+      <span class="sp-tx">
+        <span class="sp-la">Gå till ${it.sura}:${it.ayah}</span>
+        <span class="sp-su">${esc(SURAH_ROMAN[it.sura] || "")} · ${esc(SURAH_SV[it.sura] || "")}</span>
+      </span>`;
+    return a;
+  }
+
+  let timer = null;
+  let reqSeq = 0;
+
+  function close(){
+    panel.hidden = true;
+    panel.innerHTML = "";
+    input.setAttribute("aria-expanded", "false");
+  }
+
+  function open(){
+    panel.hidden = false;
+    input.setAttribute("aria-expanded", "true");
+  }
+
+  async function update(){
+    const q = input.value.trim();
+    if(!q){ close(); return; }
+
+    const seq = ++reqSeq;
+
+    const ref = parseRef(q);
+    const suras = matchSurahs(q);
+
+    panel.innerHTML = "";
+    if(ref) panel.appendChild(refRow(ref));
+    if(suras.length){
+      panel.appendChild(sectionHead("Suror"));
+      suras.forEach(s => panel.appendChild(suraRow(s, q)));
+    }
+    if(panel.children.length) open();
+
+    const verses = await fetchVerses(q);
+    if(seq !== reqSeq) return;
+
+    if(verses.length){
+      panel.appendChild(sectionHead("Verser"));
+      verses.forEach(v => panel.appendChild(verseRow(v, q)));
+    }
+
+    const foot = document.createElement("a");
+    foot.className = "sp-foot";
+    foot.href = `search.html?q=${encodeURIComponent(q)}`;
+    foot.textContent = `Sök i hela Koranen efter "${q}" →`;
+    panel.appendChild(foot);
+    open();
+  }
+
+  input.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(update, 180);
+  });
+
+  input.addEventListener("focus", () => {
+    if(input.value.trim()) update();
+  });
+
+  input.addEventListener("keydown", e => {
+    if(e.key === "Escape") close();
+  });
+
+  document.addEventListener("click", e => {
+    if(!form.contains(e.target)) close();
+  });
+})();
+</script>
+
+</body>
+</html>
