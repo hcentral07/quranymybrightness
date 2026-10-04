@@ -5,7 +5,376 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Koranen — alla 114 suror | Ljuskällan</title>
 <link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* ============================================================
+   quran.html — 3-kolumnslayout: TOC | Lista | Detaljer
+   ============================================================ */
+
+.quran-shell{
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 0;
+  max-width: 1180px;
+  margin: 0 auto;
+  min-height: calc(100vh - 100px);
+}
+
+/* -------- Vänster: innehållsförteckning -------- */
+.toc-panel{
+  background: var(--paper-card);
+  border-right: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.toc-head{
+  padding: 16px 18px 10px;
+  border-bottom: 1px solid var(--rule);
+  flex: none;
+}
+.toc-head h2{
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--emerald-dark);
+}
+.toc-search{
+  position: relative;
+}
+.toc-search input{
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  font-family: 'Lora', serif;
+  font-size: 0.92rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+.toc-search input:focus{
+  outline: 2px solid var(--emerald);
+  outline-offset: 1px;
+}
+.toc-search svg{
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: #7a6a4a;
+  pointer-events: none;
+}
+
+.toc-filter{
+  display: flex;
+  gap: 4px;
+  padding: 8px 18px 10px;
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+  flex: none;
+}
+.toc-filter button{
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 3px 9px;
+  font-family: 'Lora', serif;
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.toc-filter button:hover{ color: var(--emerald-dark); border-color: var(--gold); }
+.toc-filter button.active{
+  background: var(--emerald);
+  color: #fff;
+  border-color: var(--emerald);
+}
+
+.toc-list{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+.toc-list::-webkit-scrollbar{ width: 8px; }
+.toc-list::-webkit-scrollbar-thumb{
+  background: rgba(216,201,160,0.6);
+  border-radius: 4px;
+}
+.toc-list::-webkit-scrollbar-track{ background: transparent; }
+
+.toc-link{
+  display: grid;
+  grid-template-columns: 2.4em 1fr auto;
+  grid-template-areas:
+    "num name meta"
+    "num ar   meta";
+  align-items: center;
+  gap: 0 12px;
+  padding: 11px 18px;
+  border-bottom: 1px solid rgba(216,201,160,0.4);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s, box-shadow 0.12s;
+  position: relative;
+}
+.toc-link:last-child{ border-bottom: none; }
+.toc-link:hover{
+  background: rgba(14,92,69,0.06);
+  box-shadow: inset 3px 0 0 var(--emerald);
+  text-decoration: none;
+}
+.toc-link:hover .toc-translit{ color: var(--emerald-dark); }
+.toc-link:focus-visible{
+  outline: 2px solid var(--emerald);
+  outline-offset: -2px;
+}
+
+.toc-num{
+  grid-area: num;
+  width: 2em; height: 2em;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.74rem;
+  color: var(--emerald-dark);
+  background: var(--paper-card);
+  align-self: center;
+  transition: background 0.12s;
+}
+.toc-link:hover .toc-num{
+  background: var(--gold);
+  color: #fff;
+  border-color: var(--gold);
+}
+
+.toc-name{
+  grid-area: name;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.toc-translit{
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink);
+  transition: color 0.12s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toc-swedish{
+  font-size: 0.79rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toc-ar{
+  grid-area: ar;
+  font-family: 'Amiri', serif;
+  font-size: 0.95rem;
+  color: var(--emerald-dark);
+  direction: rtl;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.85;
+}
+
+.toc-meta{
+  grid-area: meta;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  text-align: right;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.toc-empty{
+  padding: 32px 18px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* -------- Höger: info-panel, full höjd -------- */
+.info-panel{
+  background: var(--paper-card);
+  padding: 40px 44px 44px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.info-empty{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  text-align: center;
+  color: var(--ink-soft);
+  padding: 40px 24px;
+}
+.info-empty .info-orn{
+  width: 64px;
+  height: 64px;
+  color: var(--gold);
+  opacity: 0.55;
+  margin-bottom: 20px;
+}
+.info-empty h2{
+  font-family: 'Lora', serif;
+  font-size: 1.25rem;
+  color: var(--emerald-dark);
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+.info-empty p{
+  margin: 0;
+  font-size: 0.98rem;
+  max-width: 400px;
+  line-height: 1.65;
+}
+.info-empty .hint{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+/* Ifylld info-panel */
+.info-head{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+.info-num{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6em; height: 2.6em;
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  font-size: 0.95rem;
+  color: var(--emerald-dark);
+  flex: none;
+}
+.info-title{
+  font-size: 1.9rem;
+  color: var(--emerald-dark);
+  margin: 0;
+  line-height: 1.15;
+  font-weight: 600;
+}
+.info-ar-title{
+  font-family: 'Amiri', serif;
+  font-size: 2.1rem;
+  color: var(--emerald-dark);
+  direction: rtl;
+  text-align: right;
+  margin: 14px 0 22px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rule);
+}
+.info-meta{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  margin-bottom: 26px;
+}
+.info-meta span{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.info-meta b{
+  color: var(--emerald-dark);
+  font-weight: 600;
+}
+.info-desc{
+  font-size: 1.05rem;
+  color: var(--ink);
+  margin: 0 0 28px;
+  line-height: 1.7;
+}
+.info-desc strong{
+  color: var(--emerald-dark);
+}
+.info-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* Responsivt */
+@media (max-width: 900px){
+  .quran-shell{
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .toc-panel{
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  .toc-list{
+    max-height: 50vh;
+  }
+  .info-panel{
+    position: static;
+    height: auto;
+    padding: 28px 22px;
+    order: -1;
+  }
+  .info-empty{ min-height: 0; padding: 24px 12px; }
+  .info-ar-title{ font-size: 1.7rem; }
+  .info-title{ font-size: 1.5rem; }
+}
+@media (max-width: 560px){
+  .toc-link{
+    padding: 10px 14px;
+    grid-template-columns: 2.2em 1fr auto;
+    gap: 0 10px;
+  }
+  .toc-ar{ display: none; }
+  .toc-translit{ font-size: 0.92rem; }
+  .toc-swedish{ font-size: 0.76rem; }
+  .info-head{ gap: 12px; }
+  .info-title{ font-size: 1.35rem; }
+  .info-ar-title{ font-size: 1.5rem; }
+}
+</style>
 </head>
 <body>
 
@@ -21,51 +390,321 @@
   </div>
 </header>
 
-<main>
-  <h1>Koranens 114 suror</h1>
-  <p class="lede">Välj en sura för att läsa den på arabiska och svenska, vers för vers, med länk vidare till tafsir för varje vers.</p>
+<main style="padding: 0;">
+  <div class="quran-shell">
 
-  <div id="list"><p class="loading">Hämtar listan över suror …</p></div>
+    <!-- ============ Innehållsförteckning ============ -->
+    <aside class="toc-panel" aria-label="Innehållsförteckning">
+      <div class="toc-head">
+        <h2>Innehåll · 114 suror</h2>
+        <div class="toc-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/>
+          </svg>
+          <input id="toc-q" type="search" placeholder="Sök sura …" aria-label="Sök sura">
+        </div>
+      </div>
+
+      <div class="toc-filter" role="tablist" aria-label="Filtrera">
+        <button type="button" data-filter="all" class="active">Alla</button>
+        <button type="button" data-filter="meccan">Meckanska</button>
+        <button type="button" data-filter="medinan">Medinensiska</button>
+        <button type="button" data-filter="short">Korta</button>
+      </div>
+
+      <ul class="toc-list" id="toc-list" aria-label="Suror">
+        <li class="toc-empty">Hämtar suralistan …</li>
+      </ul>
+    </aside>
+
+    <!-- ============ Info-panel ============ -->
+    <section class="info-panel" id="info" aria-live="polite">
+      <div class="info-empty">
+        <svg class="info-orn" viewBox="0 0 64 64" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="14" y="14" width="36" height="36" rx="3"></rect>
+            <rect x="14" y="14" width="36" height="36" rx="3" transform="rotate(45 32 32)"></rect>
+          </g>
+          <circle cx="32" cy="32" r="8" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+        </svg>
+        <h2>Öppna en sura</h2>
+        <p>
+          Alla Koranens 114 suror finns i listan till vänster, på arabiska och svenska,
+          vers för vers — med tafsir och recitation.
+        </p>
+        <span class="hint">↑ Tryck på en sura för att läsa den</span>
+      </div>
+    </section>
+
+  </div>
 </main>
-
-<footer>
-  <p>Suralistan hämtas live från alquran.cloud. Svensk betydelse av varje namn är en vägledande översättning.</p>
-</footer>
 
 <script src="js/surah-data.js"></script>
 <script src="js/app.js"></script>
 <script>
 (async function(){
-  const container = document.getElementById("list");
+  const listEl   = document.getElementById("toc-list");
+  const infoEl   = document.getElementById("info");
+  const searchIn = document.getElementById("toc-q");
+  const filterBtns = document.querySelectorAll(".toc-filter button");
 
-  const ORN = `<svg class="orn" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g fill="#d8a455"><rect x="15" y="15" width="34" height="34" rx="2"></rect><rect x="15" y="15" width="34" height="34" rx="2" transform="rotate(45 32 32)"></rect></g><circle cx="32" cy="32" r="11.5" fill="#0b4a31"></circle><circle cx="32" cy="32" r="7.5" fill="none" stroke="#d8a455" stroke-width="2.5"></circle></svg>`;
+  /* ---- Hämta suralistan ---- */
+  let SURAHS = [];
+  try {
+    SURAHS = await getSurahList();
+  } catch(err){
+    listEl.innerHTML = `<li class="toc-empty">Kunde inte hämta listan (${err.message}).</li>`;
+    return;
+  }
 
-  try{
-    const surahs = await getSurahList();
-    const ul = el("ul", { class: "surah-list" });
-    surahs.forEach(s => {
-      const link = el("a", { class: "sura-h", href: `sura.html?sura=${s.number}` });
-      link.insertAdjacentHTML("beforeend", ORN);
-      link.appendChild(el("span", {}, s.name));
-      link.insertAdjacentHTML("beforeend", ORN);
+  /* ---- Svenska beskrivningar av surorna ---- */
+  const SURAH_DESCRIPTIONS = {
+    1: "Koranens öppning, läs i varje bön. En bön om vägledning och Guds nåd.",
+    2: "Den längsta suran. Innehåller Tronens vers (āyat al-kursī), skapelseberättelsen och många rättsliga bestämmelser.",
+    3: "Om Imrans familj — Marias far, Jesu födelse och moraliska lärdomar från slaget vid Uhud.",
+    4: "Om kvinnornas rättigheter, familjeliv, arv och rättvisa — en av de mest detaljerade juridiska surorna.",
+    5: "Om Guds förbund, Jesu och lärjungarnas måltid, och lagen om rättvisa och mat.",
+    6: "Om den rena tron på en Gud, och varningar mot att följa förfädernas avgudadyrkan blint.",
+    7: "Om höjderna mellan paradiset och helvetet, och berättelser om forna folk som förkastade profeterna.",
+    8: "Om krigsbytet efter slaget vid Badr, och om Guds hjälp till de troende.",
+    9: "Om ånger och om att ta avstånd från förbundsbrytare. En av de sista stora surorna.",
+    10: "Om profeten Jona och Guds nåd mot dem som ångrar sig.",
+    11: "Om profeten Hud och andra forntida folks undergång, och Guds rättvisa.",
+    12: "Om Josef — Koranens vackraste berättelse, från dröm till försoning och förlåtelse.",
+    13: "Om åskan som ett tecken på Guds makt, och om löftet och varningen.",
+    14: "Om profeten Abrahams bön för Mekka och hans kamp mot avgudadyrkan.",
+    15: "Om bergslandet Hijr och folket som förkastade profeten Salih.",
+    16: "Om binas samhälle och Guds många gåvor till människan.",
+    17: "Om nattresan från Mekka till Jerusalem och profetens himmelsfärd.",
+    18: "Om grottans folk, Moses och Khidr, och berättelsen om Dhul-Qarnayn — fyra prövningar.",
+    19: "Om Maria och Jesu födelse, och om Guds nåd mot sina profeter.",
+    20: "Om Moses och Farao, och om att inte överge bönen.",
+    21: "Om profeterna — från Abraham till Muhammad — och deras gemensamma budskap.",
+    22: "Om vallfärden till Mekka och om tron på uppståndelsen.",
+    23: "Om de troendes egenskaper och om livet efter döden.",
+    24: "Om ljuset, om ärbarhet, blygsamhet och hemmets helgd.",
+    25: "Om Koranen som skiljer sanning från lögn, och om de troendes egenskaper.",
+    26: "Om poeterna och om sanningens kraft mot tomma ord.",
+    27: "Om kungen Salomo och drottningen av Saba, och om myrornas dal.",
+    28: "Om Moses barndom, Faraos förtryck och Guds räddning.",
+    29: "Om spindelns bo som en bild av falsk trygghet, och om prövningens nödvändighet.",
+    30: "Om Bysantinernas seger och om Guds löfte om seger för de troende.",
+    31: "Om Luqmans visdom och hans råd till sin son.",
+    32: "Om knäböjen och om de troendes nattsömn och bön.",
+    33: "Om de allierade stammarna som belägrade Medina, och om profetens familj.",
+    34: "Om drottningen av Saba, Davids och Salomos riken, och om tacksamhet.",
+    35: "Om Gud som skaparen av himlar och jord, och om änglarnas tjänst.",
+    36: "Koranens hjärta, ofta reciterad vid sjukbäddar och begravningar. Om uppståndelsen och Guds nåd.",
+    37: "Om änglarnas rader och om Abrahams offer, och om de troendes lön.",
+    38: "Om Davids och Salomos visdom, och om Jobs tålamod i lidandet.",
+    39: "Om skarorna på Domedagen, och om uppriktig tillbedjan av Gud.",
+    40: "Om den förlåtande Guden, och om Moses och Faraos trots.",
+    41: "Om uppenbarelsen förklarad i detalj, och om människans tacksamhet.",
+    42: "Om rådslaget och om Guds enhet, och om förlåtelse för syndare.",
+    43: "Om guldsmycken och om fåfängligheten i världsliga ägodelar.",
+    44: "Om röken som ett tecken på Domedagen, och om Faraos undergång.",
+    45: "Om den knäböjande människan inför Guds dom, och om sanningens vikt.",
+    46: "Om sandkullarna och om folket i Al-Ahqaf som förkastade profeten Hud.",
+    47: "Om profeten Muhammad och om krigets etik och Guds hjälp.",
+    48: "Om segern vid Hudaybiyyah och om fredsfördragets visdom.",
+    49: "Om kamrarna och om goda seder i ummah, och om människans jämlikhet.",
+    50: "Om bokstaven Qaf och om uppståndelsens verklighet.",
+    51: "Om de virvlande vindarna, och om Abrahams och Lots gäster.",
+    52: "Om berget Sinai och om de troendes belöning och de förnekandes straff.",
+    53: "Om stjärnan som uppenbarades för profeten, och om avgudarnas fåfänglighet.",
+    54: "Om månen som delades, och om forntida folks undergång.",
+    55: "Den Nåderike — en lovsång i rytmisk form som upprepar 'Vilken av er Herres välgärningar förnekar ni?'",
+    56: "Om den stundande händelsen och om de tre grupperna på Domedagen.",
+    57: "Om järnet och om Guds makt, och om att ge i välgörenhet.",
+    58: "Om kvinnan som klagade till profeten, och om skilsmässans rättvisa.",
+    59: "Om samlingen av de troende och om förvisningen av otroende stammar.",
+    60: "Om den prövade kvinnan och om lojalitet och fiendskap i tron.",
+    61: "Om slagordningen och om att hålla sina löften till Gud.",
+    62: "Om fredagen och om bönens och predikans betydelse.",
+    63: "Om hycklarna och om faran av att tala med kluven tunga.",
+    64: "Om det ömsesidiga sveket på Domedagen, och om Guds rättvisa.",
+    65: "Om skilsmässan och om kvinnans och barnets rättigheter i lagen.",
+    66: "Om förbudet och om profetens hustrur som föredömen.",
+    67: "Om herraväldet över liv, död och återuppståndelse — en av de mest lästa surorna.",
+    68: "Om pennan och om Guds kunskap, och om tålamod mot förtal.",
+    69: "Om den oundvikliga verkligheten och om räkenskapens bok.",
+    70: "Om himlastegarna och om bönens och ärbarhetens betydelse.",
+    71: "Om Noa och hans folk, och om varningen före syndafloden.",
+    72: "Om jinnerna som lyssnade till Koranen och blev troende.",
+    73: "Om den höljde profeten och om bönens kraft i nattens mörker.",
+    74: "Om den inswepte och om uppmaningen att varna och prisa Gud.",
+    75: "Om uppståndelsen och om själens ansvar inför Gud.",
+    76: "Om människan och om de rättfärdigas belöning i paradiset.",
+    77: "Om de utsända vindarna och om Domedagens visshet.",
+    78: "Om budskapet om uppståndelsen och om Guds skapelse.",
+    79: "Om de som rycker ut själarna och om Faraos öde.",
+    80: "Om profeten som rynkade pannan mot en blind man, och om ödmjukhet.",
+    81: "Om hoprullandet av himlarna och om själens vittnesbörd.",
+    82: "Om klyvandet av himlen och om änglarnas nedtecknande av handlingar.",
+    83: "Om månglarna som fuskar med mått och vikt, och om rättvisa i handel.",
+    84: "Om bristningen av himlen och om människans möte med sin Herre.",
+    85: "Om stjärnbilderna och om de troendes prövning och seger.",
+    86: "Om nattens besökare och om Guds skapelse av människan.",
+    87: "Om den Högste och om rening av själen och Guds namn.",
+    88: "Om den överväldigande händelsen och om paradisets och helvetets folk.",
+    89: "Om gryningen och om förgängligheten av forna riken.",
+    90: "Om staden Mekka och om människans plikt att göra gott.",
+    91: "Om solen och om själens renande och fördärv.",
+    92: "Om natten och om skillnaden mellan den givmilde och den snåle.",
+    93: "Om förmiddagen och om Guds tröst till profeten.",
+    94: "Om den vidgade bröstkorgen och om lättnad efter svårighet.",
+    95: "Om fikonet och olivträdet och om människans skönhet och fall.",
+    96: "Om levringen och om kunskapens och läsandets betydelse.",
+    97: "Om Allmaktens natt och om Koranens början och änglarnas nedstigande.",
+    98: "Om beviset och om de troendes och de otroendes skillnad.",
+    99: "Om jordbävningen och om jordens vittnesbörd på Domedagen.",
+    100: "Om de frustande springarna och om människans otacksamhet mot Gud.",
+    101: "Om den förfärliga katastrofen och om människans handlingars vikt.",
+    102: "Om strävan att överträffa varandra i rikedom och om dess fåfänglighet.",
+    103: "Om den sena eftermiddagen och om tidens värde och trons gemenskap.",
+    104: "Om baktalaren och om faran av förtal och hån.",
+    105: "Om elefanten och om Guds skydd av Kaba mot Abrahas armé.",
+    106: "Om Quraysh-stammen och om Guds välsignelse över Mekka.",
+    107: "Om det nödvändigaste och om bönens och hjälpens plikt.",
+    108: "Om den rikliga ymnigheten och om Guds gåva till profeten.",
+    109: "Om förnekarna och om trons frihet och gränser.",
+    110: "Om hjälpen och om segern och människornas inträde i tron.",
+    111: "Om fibertågets rep och om Abu Lahabs och hans hustrus öde.",
+    112: "Om den rena tron — Guds enhet och odelbarhet.",
+    113: "Om den tidiga gryningen och om tillflykt till Gud från ondska.",
+    114: "Om människorna och om tillflykt till Gud från onda viskningar."
+  };
 
-      const row = el("li", { class: "surah-row" }, [
-        link,
-        el("span", { class: "surah-num" }, String(s.number)),
-        el("span", { class: "surah-names" }, [
-          el("span", { class: "translit" }, s.englishName),
-          el("span", { class: "swedish" }, SURAH_SV[s.number] || s.englishNameTranslation)
-        ]),
-        el("span", { class: "surah-meta" }, `${s.numberOfAyahs} verser · ${s.revelationType === "Meccan" ? "meckansk" : "medinensisk"}`)
-      ]);
-      ul.appendChild(row);
+  /* ---- Bygg listan: varje rad är en <a> som navigerar direkt ---- */
+  listEl.innerHTML = "";
+  const linkEls = [];
+
+  SURAHS.forEach(s => {
+    const li = document.createElement("li");
+
+    const a = document.createElement("a");
+    a.className = "toc-link";
+    a.href = `sura.html?sura=${s.number}`;
+    a.dataset.num   = String(s.number);
+    a.dataset.rev   = s.revelationType === "Meccan" ? "meccan" : "medinan";
+    a.dataset.ayahs = String(s.numberOfAyahs);
+    a.dataset.name  = (s.englishName || "").toLowerCase();
+    a.dataset.sv    = (SURAH_SV[s.number] || "").toLowerCase();
+
+    a.innerHTML = `
+      <span class="toc-num">${s.number}</span>
+      <span class="toc-name">
+        <span class="toc-translit">${s.englishName}</span>
+        <span class="toc-swedish">${SURAH_SV[s.number] || s.englishNameTranslation}</span>
+      </span>
+      <span class="toc-ar">${s.name}</span>
+      <span class="toc-meta">${s.numberOfAyahs} · ${s.revelationType === "Meccan" ? "meck." : "medin."}</span>
+    `;
+
+    /* Hover → uppdatera info-panelen */
+    a.addEventListener("mouseenter", () => showInfo(s));
+    a.addEventListener("focus",      () => showInfo(s));
+
+    li.appendChild(a);
+    listEl.appendChild(li);
+    linkEls.push(a);
+  });
+
+  /* ---- Info-panel ---- */
+  let lastShown = null;
+
+  function showInfo(s){
+    if (lastShown === s.number) return;
+    lastShown = s.number;
+
+    const rev = s.revelationType === "Meccan" ? "Meckansk" : "Medinensisk";
+    const desc = SURAH_DESCRIPTIONS[s.number] || "";
+    const svName = SURAH_SV[s.number] || s.englishNameTranslation;
+
+    infoEl.innerHTML = `
+      <header class="info-head">
+        <span class="info-num">${s.number}</span>
+        <h2 class="info-title">${s.englishName}</h2>
+      </header>
+      <p class="info-ar-title">${s.name}</p>
+      <div class="info-meta">
+        <span><b>${s.numberOfAyahs}</b> verser</span>
+        <span>${rev}</span>
+        <span>Nr <b>${s.number}</b> av 114</span>
+      </div>
+      <p class="info-desc">
+        <strong>${svName}</strong>${desc ? " — " + desc : ""}
+      </p>
+      <div class="info-actions">
+        <a class="btn" href="sura.html?sura=${s.number}">
+          Öppna suran
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align: middle; margin-left: 6px;">
+            <path fill="currentColor" d="M9 5l7 7-7 7z"/>
+          </svg>
+        </a>
+        <a class="btn btn-ghost" href="sura.html?sura=${s.number}#ayah-1">Läs från vers 1</a>
+      </div>
+    `;
+  }
+
+  /* ---- Filtrering + sökning ---- */
+  let activeFilter = "all";
+  let query = "";
+
+  function applyFilter(){
+    let visible = 0;
+    linkEls.forEach(a => {
+      const matchesFilter =
+        activeFilter === "all" ||
+        a.dataset.rev === activeFilter ||
+        (activeFilter === "short" && Number(a.dataset.ayahs) < 30);
+      const matchesQuery =
+        !query ||
+        a.dataset.name.includes(query) ||
+        a.dataset.sv.includes(query) ||
+        a.dataset.num === query;
+      const show = matchesFilter && matchesQuery;
+      a.parentElement.style.display = show ? "" : "none";
+      if (show) visible++;
     });
-    container.innerHTML = "";
-    container.appendChild(ul);
-  }catch(err){
-    container.innerHTML = `<p class="notice">Kunde inte hämta suralistan just nu (${err.message}). Kontrollera din internetanslutning och ladda om sidan.</p>`;
+
+    let empty = listEl.querySelector(".toc-empty-dynamic");
+    if (!visible){
+      if (!empty){
+        empty = document.createElement("li");
+        empty.className = "toc-empty toc-empty-dynamic";
+        listEl.appendChild(empty);
+      }
+      empty.textContent = "Inga suror matchar.";
+    } else if (empty){
+      empty.remove();
+    }
+  }
+
+  searchIn.addEventListener("input", () => {
+    query = searchIn.value.trim().toLowerCase();
+    applyFilter();
+  });
+
+  filterBtns.forEach(b => {
+    b.addEventListener("click", () => {
+      activeFilter = b.dataset.filter;
+      filterBtns.forEach(x => x.classList.toggle("active", x === b));
+      applyFilter();
+    });
+  });
+
+  /* ---- Om ?sura=… finns i URL:en, visa i info-panelen ---- */
+  const p = new URLSearchParams(location.search);
+  const wanted = parseInt(p.get("sura"), 10);
+  if (Number.isInteger(wanted) && wanted >= 1 && wanted <= 114){
+    const s = SURAHS.find(x => x.number === wanted);
+    const a = linkEls.find(x => Number(x.dataset.num) === wanted);
+    if (s) showInfo(s);
+    if (a) a.scrollIntoView({ block: "center" });
   }
 })();
 </script>
+
 </body>
 </html>
