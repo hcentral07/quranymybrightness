@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ljuskällan — Koranen på svenska med tafsir och tajwid</title>
+<title>HolyMushaf — Koranen med tafsir och tajwid</title>
 <meta name="description" content="Koranens fullständiga text på arabiska och svenska, klassisk tafsir och tajwidlära, samlat på ett ställe.">
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,13 +15,35 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <div class="site-name">HolyMushaf <span class="arabic">القرآن</span></div>
     <nav class="main-nav">
-      <a href="index.html" class="current">Hem</a>
-      <a href="quran.html">Koranen</a>
-      <a href="tajwid.html">Tajwid</a>
-      <a href="om.html">Om sidan</a>
+      <a href="index.html" class="current" data-i18n="nav.home">Hem</a>
+      <a href="quran.html" data-i18n="nav.quran">Koranen</a>
+      <a href="tajwid.html" data-i18n="nav.tajwid">Tajwid</a>
+      <a href="om.html" data-i18n="nav.about">Om sidan</a>
     </nav>
+
+    <!-- Language switcher, top right -->
+    <div class="lang-switcher">
+      <button id="lang-btn" class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"
+              data-i18n-aria="lang.label" aria-label="Språk">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.6a15.6 15.6 0 0 0-1.3-3.4A8 8 0 0 1 18.9 8zM12 4.1c.8 1 1.5 2.4 1.9 3.9h-3.8c.4-1.5 1.1-2.9 1.9-3.9zM4.3 14a8 8 0 0 1 0-4h3a17 17 0 0 0 0 4h-3zm.8 2h2.6c.3 1.2.8 2.4 1.3 3.4A8 8 0 0 1 5.1 16zm2.6-8H5.1a8 8 0 0 1 3.9-3.4A15.6 15.6 0 0 0 7.7 8zM12 19.9c-.8-1-1.5-2.4-1.9-3.9h3.8c-.4 1.5-1.1 2.9-1.9 3.9zm2.3-5.9H9.7a15 15 0 0 1 0-4h4.6a15 15 0 0 1 0 4zm.7 5.4c.5-1 1-2.2 1.3-3.4h2.6a8 8 0 0 1-3.9 3.4zm1.7-5.4a17 17 0 0 0 0-4h3a8 8 0 0 1 0 4h-3z"/>
+        </svg>
+        <span id="lang-current">SV</span>
+      </button>
+      <ul id="lang-menu" class="lang-menu" hidden>
+        <li><button type="button" data-lang="sv">Svenska</button></li>
+        <li><button type="button" data-lang="en">English</button></li>
+        <li><button type="button" data-lang="ar">العربية</button></li>
+        <li><button type="button" data-lang="fr">Français</button></li>
+        <li><button type="button" data-lang="de">Deutsch</button></li>
+        <li><button type="button" data-lang="es">Español</button></li>
+        <li><button type="button" data-lang="tr">Türkçe</button></li>
+        <li><button type="button" data-lang="ur">اردو</button></li>
+        <li><button type="button" data-lang="id">Bahasa Indonesia</button></li>
+      </ul>
+    </div>
   </div>
 </header>
 
@@ -71,31 +93,32 @@
           </svg>
           <div class="hero-medal-text">
             <span class="hero-medal-ar arabic">الموسوعة</span>
-            <span class="hero-medal-sub">Ljuskällan</span>
+            <span class="hero-medal-sub">HolyMushaf</span>
           </div>
         </div>
       </div>
     </div>
 
-    <h1 id="hero-h" class="home-hero-title">
+    <h1 id="hero-h" class="home-hero-title" data-i18n="hero.title">
       Koranen på svenska — text, tafsir och tajwid
     </h1>
 
     <form class="home-search" role="search" action="search.html" method="get" autocomplete="off">
-      <label class="sr-only" for="home-q">Sök i Koranen</label>
+      <label class="sr-only" for="home-q" data-i18n="hero.search.label">Sök i Koranen</label>
       <svg class="home-search-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/>
       </svg>
       <input id="home-q" name="q" type="search"
+             data-i18n-placeholder="hero.search.placeholder"
              placeholder="Sök på ett ord, eller ange sura:vers — t.ex. 2:255"
              aria-autocomplete="list"
              aria-controls="home-search-panel"
              aria-expanded="false">
-      <button type="submit" class="home-search-btn">Sök</button>
+      <button type="submit" class="home-search-btn" data-i18n="hero.search.button">Sök</button>
       <div class="search-panel" id="home-search-panel" role="listbox" hidden></div>
     </form>
 
-    <p class="home-hero-tag">
+    <p class="home-hero-tag" data-i18n="hero.tagline">
       Koranens arabiska text och svenska tolkning, klassisk tafsir vers för vers,
       tajwid och läran om recitation — fritt och öppet.
     </p>
@@ -103,19 +126,19 @@
     <nav class="home-cta" aria-label="Snabbval">
       <a class="home-cta-btn primary" href="quran.html">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>
-        <span>Alla 114 suror</span>
+        <span data-i18n="cta.allSuras">Alla 114 suror</span>
       </a>
       <a class="home-cta-btn" href="sura.html?sura=1">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.7 2v16h1.2V4H7.7zM14 2v9.2l1.5-1.3 1.5 1.3V2h-3z"/></svg>
-        <span>Läs surorna</span>
+        <span data-i18n="cta.readSuras">Läs surorna</span>
       </a>
       <a class="home-cta-btn" href="sura.html?sura=1">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.5 5.2C3.9 4.5 5.4 4.2 7 4.2c1.9 0 3.6.5 5 1.5 1.4-1 3.1-1.5 5-1.5 1.6 0 3.1.3 4.5 1v13.6c-1.4-.7-2.9-1-4.5-1-1.9 0-3.6.5-5 1.5-1.4-1-3.1-1.5-5-1.5-1.6 0-3.1.3-4.5 1V5.2zm8.9 1.4h1.2v12.2h-1.2V6.6z"/></svg>
-        <span>Tafsir</span>
+        <span data-i18n="cta.tafsir">Tafsir</span>
       </a>
       <a class="home-cta-btn" href="tajwid.html">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h4.2v16H3zm.9 2.4v1.1h2.4V5.4zm0 11v1.1h2.4v-1.1zM8.4 5.5h4v13.5h-4zm.8 2.2v1h2.4v-1zm0 8.6v1h2.4v-1zM13.8 5.2l3.9-1.1 4.2 14.9-3.9 1.1z"/><path fill="currentColor" d="M2 19.6h20v1.8H2z"/></svg>
-        <span>Tajwid</span>
+        <span data-i18n="cta.tajwid">Tajwid</span>
       </a>
     </nav>
 
@@ -126,17 +149,17 @@
 
   <section class="stats-row" aria-label="Innehåll i korthet">
     <ul class="stats-list">
-      <li><a href="quran.html"><b>114</b><span>suror i Koranen</span></a></li>
-      <li><a href="quran.html"><b>6&nbsp;236</b><span>verser, arabiska och svenska</span></a></li>
-      <li><a href="sura.html?sura=1"><b>110+</b><span>tafsirutgåvor tillgängliga</span></a></li>
-      <li><a href="tajwid.html"><b>2</b><span>klassiska tajwidläroverk</span></a></li>
+      <li><a href="quran.html"><b>114</b><span data-i18n="stats.suras">suror i Koranen</span></a></li>
+      <li><a href="quran.html"><b>6&nbsp;236</b><span data-i18n="stats.verses">verser, arabiska och svenska</span></a></li>
+      <li><a href="sura.html?sura=1"><b>110+</b><span data-i18n="stats.tafsir">tafsirutgåvor tillgängliga</span></a></li>
+      <li><a href="tajwid.html"><b>2</b><span data-i18n="stats.tajwid">klassiska tajwidläroverk</span></a></li>
     </ul>
   </section>
 
   <section class="doors-section" aria-labelledby="doors-h">
     <header class="section-head">
-      <h2 id="doors-h">Var vill du börja?</h2>
-      <p class="section-sub">
+      <h2 id="doors-h" data-i18n="section.doors.title">Var vill du börja?</h2>
+      <p class="section-sub" data-i18n="section.doors.sub">
         Fyra ingångar till samma källa — läs Koranen, fördjupa dig i en vers,
         studera tafsir eller lär dig recitera.
       </p>
@@ -149,10 +172,9 @@
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>
           </span>
           <span class="door-body">
-            <b>Koranen, sura för sura</b>
-            <em>114 suror · alla verser</em>
-            <span>Bläddra bland alla suror. Varje vers visas på arabiska och
-              svenska, med en direktlänk vidare till tafsir.</span>
+            <b data-i18n="door.quran.title">Koranen, sura för sura</b>
+            <em data-i18n="door.quran.em">114 suror · alla verser</em>
+            <span data-i18n="door.quran.body">Bläddra bland alla suror. Varje vers visas på arabiska och svenska, med en direktlänk vidare till tafsir.</span>
           </span>
         </a>
       </li>
@@ -163,10 +185,9 @@
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.7 2v16h1.2V4H7.7zM14 2v9.2l1.5-1.3 1.5 1.3V2h-3z"/></svg>
           </span>
           <span class="door-body">
-            <b>Tafsir</b>
-            <em>110+ utgåvor</em>
-            <span>Klassisk och modern vers-för-vers-tolkning, från Ibn Kathir och
-              al-Tabari till al-Sa'di och al-Muyassar.</span>
+            <b data-i18n="door.tafsir.title">Tafsir</b>
+            <em data-i18n="door.tafsir.em">110+ utgåvor</em>
+            <span data-i18n="door.tafsir.body">Klassisk och modern vers-för-vers-tolkning, från Ibn Kathir och al-Tabari till al-Sa'di och al-Muyassar.</span>
           </span>
         </a>
       </li>
@@ -177,11 +198,9 @@
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h4.2v16H3zm.9 2.4v1.1h2.4V5.4zm0 11v1.1h2.4v-1.1zM8.4 5.5h4v13.5h-4zm.8 2.2v1h2.4v-1zm0 8.6v1h2.4v-1zM13.8 5.2l3.9-1.1 4.2 14.9-3.9 1.1z"/><path fill="currentColor" d="M2 19.6h20v1.8H2z"/></svg>
           </span>
           <span class="door-body">
-            <b>Tajwid</b>
-            <em>2 klassiska läroverk</em>
-            <span>Grunderna i korrekt koranrecitation, strukturerat efter
-              <em>Tuhfat al-Atfal</em> och <em>al-Jazariyya</em> — med
-              fullständiga texter att läsa.</span>
+            <b data-i18n="door.tajwid.title">Tajwid</b>
+            <em data-i18n="door.tajwid.em">2 klassiska läroverk</em>
+            <span data-i18n="door.tajwid.body">Grunderna i korrekt koranrecitation, strukturerat efter Tuhfat al-Atfal och al-Jazariyya — med fullständiga texter att läsa.</span>
           </span>
         </a>
       </li>
@@ -192,10 +211,9 @@
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
           </span>
           <span class="door-body">
-            <b>Om sidan</b>
-            <em>Källor och licenser</em>
-            <span>Öppna källor, öppna licenser. Se vilka projekt texterna
-              kommer från och hur de används.</span>
+            <b data-i18n="door.about.title">Om sidan</b>
+            <em data-i18n="door.about.em">Källor och licenser</em>
+            <span data-i18n="door.about.body">Öppna källor, öppna licenser. Se vilka projekt texterna kommer från och hur de används.</span>
           </span>
         </a>
       </li>
@@ -204,9 +222,9 @@
 
   <section class="featured-section" aria-labelledby="featured-h">
     <header class="section-head">
-      <h2 id="featured-h">Börja med en av dessa</h2>
-      <p class="section-sub">
-        Korta suror att bekanta sig med, eller <a href="quran.html">se alla 114</a>.
+      <h2 id="featured-h" data-i18n="section.featured.title">Börja med en av dessa</h2>
+      <p class="section-sub" data-i18n="section.featured.sub">
+        Korta suror att bekanta sig med, eller se alla 114.
       </p>
     </header>
 
@@ -330,51 +348,50 @@
   </section>
 
   <section class="framed" aria-labelledby="om-sidan">
-    <h2 id="om-sidan">Vad hittar du här?</h2>
+    <h2 id="om-sidan" data-i18n="about.heading">Vad hittar du här?</h2>
 
     <dl class="feature-list">
-      <dt>Koranens text</dt>
-      <dd>
+      <dt data-i18n="about.dt.text">Koranens text</dt>
+      <dd data-i18n="about.dd.text">
         Den fullständiga arabiska Uthmani-texten, vers för vers, tillsammans med
         Knut Bernströms svenska tolkning — den mest spridda fullständiga svenska
         Korantolkningen.
       </dd>
 
-      <dt>Tafsir</dt>
-      <dd>
+      <dt data-i18n="about.dt.tafsir">Tafsir</dt>
+      <dd data-i18n="about.dd.tafsir">
         Klassisk och modern kommentarlitteratur i över hundra utgåvor — från
         Ibn Kathir, al-Tabari och al-Qurtubi till al-Sa'di, al-Muyassar och
         Ibn Ashur. Varje utgåva förklarar versernas sammanhang, orsak till
         uppenbarelse och juridiska eller språkliga poänger.
       </dd>
 
-      <dt>Tajwid</dt>
-      <dd>
+      <dt data-i18n="about.dt.tajwid">Tajwid</dt>
+      <dd data-i18n="about.dd.tajwid">
         Reglerna för korrekt uttal och recitation, genomgångna utifrån strukturen
-        i de klassiska läroverken <em>Tuhfat al-Atfal</em> av al-Jamzuri och
-        <em>al-Muqaddimah al-Jazariyyah</em> av Ibn al-Jazari — med de
+        i de klassiska läroverken Tuhfat al-Atfal av al-Jamzuri och
+        al-Muqaddimah al-Jazariyyah av Ibn al-Jazari — med de
         fullständiga texterna att läsa direkt på sidan.
       </dd>
     </dl>
   </section>
 
   <aside class="notice" role="note">
-    <strong>En ärlig notering:</strong>
-    tafsir-texterna på den här sidan hämtas från öppna källor som i dag bara
-    finns på arabiska eller engelska — det finns ännu ingen fri, öppet licensierad
-    svensk översättning av till exempel Ibn Kathirs tafsir.
-    Se <a href="om.html">Om sidan</a> för detaljer och källor.
+    <strong data-i18n="notice.title">En ärlig notering:</strong>
+    <span data-i18n="notice.body">tafsir-texterna på den här sidan hämtas från öppna källor som i dag bara finns på arabiska eller engelska — det finns ännu ingen fri, öppet licensierad svensk översättning av till exempel Ibn Kathirs tafsir. Se Om sidan för detaljer och källor.</span>
   </aside>
 
 </main>
 
 <footer>
   <p>
-  Ljuskällan — Koranen på svenska - 2026
+  <span data-i18n="footer.text">HolyMushaf — Koranen på svenska - 2026</span>
   </p>
 </footer>
 
 <script src="js/surah-data.js"></script>
+<script src="js/i18n.js"></script>
+
 <script>
 /* ============================================================
    Live-sökpanel — robust mot CORS
@@ -435,7 +452,7 @@
         return [{
           type: "sura", sura: n,
           label: `${n}. ${SURAH_ROMAN[n] || ""}`.trim(),
-          sub: SURAH_SV[n] || ""
+          sub: (typeof SURAH_SV !== "undefined" && SURAH_SV[n]) || ""
         }];
       }
     }
@@ -443,12 +460,12 @@
     const out = [];
     for(let n = 1; n <= SURAH_TOTAL; n++){
       const roman = (SURAH_ROMAN[n] || "").toLowerCase();
-      const sv = (SURAH_SV[n] || "").toLowerCase();
+      const sv = (typeof SURAH_SV !== "undefined" && SURAH_SV[n] ? SURAH_SV[n] : "").toLowerCase();
       if(roman.startsWith(needle) || roman.includes(needle) || sv.includes(needle)){
         out.push({
           type: "sura", sura: n,
           label: `${n}. ${SURAH_ROMAN[n]}`,
-          sub: SURAH_SV[n] || ""
+          sub: (typeof SURAH_SV !== "undefined" && SURAH_SV[n]) || ""
         });
       }
       if(out.length >= 4) break;
@@ -465,12 +482,11 @@
   }
 
   async function fetchVerses(q){
-    // Minst 3 tecken — kortare frågor ger inga användbara träffar.
     if(q.length < 3) return [];
 
     const cleanQ = encodeURIComponent(q.trim());
-    // RÄTT URL: /search/{nyckelord}/all/{utgåva}
-    const direct = `https://api.alquran.cloud/v1/search/${cleanQ}/all/sv.bernstrom`;
+    const edition = (window.HM && window.HM.quranEdition) || "sv.bernstrom";
+    const direct = `https://api.alquran.cloud/v1/search/${cleanQ}/all/${edition}`;
 
     let data = await tryJson(direct);
     if(!data){
@@ -488,7 +504,7 @@
       ayah: m.numberInSurah,
       text: m.text,
       roman: SURAH_ROMAN[m.surah.number] || m.surah.englishName,
-      sv: SURAH_SV[m.surah.number] || ""
+      sv: (typeof SURAH_SV !== "undefined" && SURAH_SV[m.surah.number]) || ""
     }));
   }
 
@@ -551,7 +567,7 @@
       <span class="sp-ic" aria-hidden="true">→</span>
       <span class="sp-tx">
         <span class="sp-la">Gå till ${it.sura}:${it.ayah}</span>
-        <span class="sp-su">${esc(SURAH_ROMAN[it.sura] || "")} · ${esc(SURAH_SV[it.sura] || "")}</span>
+        <span class="sp-su">${esc(SURAH_ROMAN[it.sura] || "")} · ${esc((typeof SURAH_SV !== "undefined" && SURAH_SV[it.sura]) || "")}</span>
       </span>`;
     return a;
   }
@@ -618,6 +634,11 @@
 
   document.addEventListener("click", e => {
     if(!form.contains(e.target)) close();
+  });
+
+  // Re-run the search when the language changes (edition may differ)
+  document.addEventListener("hm:langchange", () => {
+    if(input.value.trim()) update();
   });
 })();
 </script>
