@@ -3,41 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sura | Ljuskällan</title>
+<title>Sura | HolyMushaf</title>
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* Brief pulse so a deep link (?ayah=N) is obvious when it lands. */
+@keyframes lj-ayah-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(14,92,69,0.35); }
+  100% { box-shadow: 0 0 0 14px rgba(14,92,69,0); }
+}
+.ayah.lj-deeplink-target { animation: lj-ayah-pulse 1.1s ease-out 2; border-radius: 6px; }
+</style>
 </head>
 <body>
 
 <header class="site-header">
   <div class="header-inner">
-    <div class="site-name">Ljuskällan <span class="arabic">القرآن</span></div>
+    <div class="site-name">HolyMushaf <span class="arabic">القرآن</span></div>
     <nav class="main-nav">
-      <a href="index.html">Hem</a>
-      <a href="quran.html" class="current">Koranen</a>
-      <a href="tajwid.html">Tajwid</a>
-      <a href="settings.html">Inställningar</a>
-      <a href="om.html">Om sidan</a>
+      <a href="index.html" data-i18n="nav.home">Hem</a>
+      <a href="quran.html" class="current" data-i18n="nav.quran">Koranen</a>
+      <a href="tajwid.html" data-i18n="nav.tajwid">Tajwid</a>
+      <a href="settings.html" data-i18n="nav.settings">Inställningar</a>
+      <a href="om.html" data-i18n="nav.about">Om sidan</a>
     </nav>
+
+    <div class="lang-switcher">
+      <button id="lang-btn" class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false"
+              data-i18n-aria="lang.label" aria-label="Språk">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.6a15.6 15.6 0 0 0-1.3-3.4A8 8 0 0 1 18.9 8zM12 4.1c.8 1 1.5 2.4 1.9 3.9h-3.8c.4-1.5 1.1-2.9 1.9-3.9zM4.3 14a8 8 0 0 1 0-4h3a17 17 0 0 0 0 4h-3zm.8 2h2.6c.3 1.2.8 2.4 1.3 3.4A8 8 0 0 1 5.1 16zm2.6-8H5.1a8 8 0 0 1 3.9-3.4A15.6 15.6 0 0 0 7.7 8zM12 19.9c-.8-1-1.5-2.4-1.9-3.9h3.8c-.4 1.5-1.1 2.9-1.9 3.9zm2.3-5.9H9.7a15 15 0 0 1 0-4h4.6a15 15 0 0 1 0 4zm.7 5.4c.5-1 1-2.2 1.3-3.4h2.6a8 8 0 0 1-3.9 3.4zm1.7-5.4a17 17 0 0 0 0-4h3a8 8 0 0 1 0 4h-3z"/>
+        </svg>
+        <span id="lang-current">SV</span>
+      </button>
+      <ul id="lang-menu" class="lang-menu" hidden>
+        <li><button type="button" data-lang="sv">Svenska</button></li>
+        <li><button type="button" data-lang="en">English</button></li>
+        <li><button type="button" data-lang="ar">العربية</button></li>
+        <li><button type="button" data-lang="fr">Français</button></li>
+        <li><button type="button" data-lang="de">Deutsch</button></li>
+        <li><button type="button" data-lang="es">Español</button></li>
+        <li><button type="button" data-lang="tr">Türkçe</button></li>
+        <li><button type="button" data-lang="ur">اردو</button></li>
+        <li><button type="button" data-lang="id">Bahasa Indonesia</button></li>
+      </ul>
+    </div>
   </div>
 </header>
 
 <main>
-  <div id="head"><p class="loading">Hämtar sura …</p></div>
+  <div id="head"><p class="loading" data-i18n="sura.loading">Hämtar sura …</p></div>
   <div id="ayahs"></div>
   <div class="pager" id="pager"></div>
 </main>
 
 <footer>
-  <p>Arabisk text: Uthmani-utgåvan. Svensk översättning: Knut Bernström. Källa: alquran.cloud &amp; quran.com.</p>
+  <p data-i18n="sura.footer">Made By Hc07</p>
 </footer>
 
 <div id="player-bar" class="player-bar" hidden aria-hidden="true">
   <div class="player-inner">
     <div class="player-controls">
-      <button class="player-btn" id="pb-prev" type="button" title="Föregående vers"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg></button>
-      <button class="player-btn player-btn-main" id="pb-toggle" type="button" title="Spela/Pausa"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
-      <button class="player-btn" id="pb-next" type="button" title="Nästa vers"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 6h2v12h-2zM6 6v12l8.5-6z"/></svg></button>
+      <button class="player-btn" id="pb-prev" type="button" data-i18n-aria="sura.player.prev" title="Föregående vers"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 6h2v12H6zM9.5 12l8.5 6V6z"/></svg></button>
+      <button class="player-btn player-btn-main" id="pb-toggle" type="button" data-i18n-aria="sura.player.playpause" title="Spela/Pausa"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
+      <button class="player-btn" id="pb-next" type="button" data-i18n-aria="sura.player.next" title="Nästa vers"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 6h2v12h-2zM6 6v12l8.5-6z"/></svg></button>
     </div>
     <div class="player-center">
       <div class="player-label"><span class="player-title" id="pb-title">—</span><span class="player-sub" id="pb-sub">—</span></div>
@@ -59,13 +88,14 @@
 <script src="js/settings.js"></script>
 <script src="js/tajweed.js"></script>
 <script src="js/app.js"></script>
+<script src="js/i18n.js"></script>
 <script>
 /* ---------- Basmala stripper ---------- */
 (function(){
-  const DIACRITICS_RE = /[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED\u08D4-\u08E1\u08E3-\u08FF]/g;
+  const DIACRITICS_RE = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08D4-\u08E1\u08E3-\u08FF]/g;
   const ALEF_RE = /[أإٱآ]/g;
   function stripDiacritics(s){ return s.replace(DIACRITICS_RE, "").replace(ALEF_RE, "ا"); }
-  const BASMALA_SKELETON = "بسمهللارحمنالرحيم".replace(/ /g, "");
+  const BASMALA_SKELETON = "بسماللهالرحمنالرحيم";
   function stripLeadingBasmala(text){
     const stripped = stripDiacritics(text).replace(/\s+/g, "");
     if(!stripped.startsWith(BASMALA_SKELETON)) return { basmala: null, rest: text };
@@ -103,8 +133,11 @@ function ljPlayUrl(url){
   if (!url) return;
   ljPlayer.pause();
   ljPlayer.src = url;
-  ljPlayer.play().catch((err)=> console.warn("Audio failed:", url, err));
+  ljPlayer.play().catch(()=> { /* no audio — ignore */ });
 }
+
+/* ---------- Translation helper ---------- */
+function T(k){ return (window.HM && window.HM.t) ? window.HM.t(k) : k; }
 
 /* ---------- Icons ---------- */
 const PLAY_ICON  = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
@@ -125,7 +158,7 @@ let currentVerseCleanup = null;
 let playToken = 0;
 let masterBtn = null;
 let fullSurahActive = false;
-const TIMING_OFFSET_MS = 0;    /* set to 0 now — no more guess-offset needed */
+const TIMING_OFFSET_MS = 0;
 
 const pb = {
   root: document.getElementById("player-bar"),
@@ -176,14 +209,14 @@ function updatePlayerBarFromAudio(){
 function setPlayerTitle(ayahNum){
   if (!SURAH_META) return;
   pb.title.textContent = `${SURAH_META.number}. ${SURAH_META.englishName}`;
-  pb.sub.textContent = `Vers ${ayahNum} av ${SURAH_META.numberOfAyahs} · ${RECITER_LABEL}`;
+  pb.sub.textContent = `${T("sura.verse")} ${ayahNum} ${T("sura.of")} ${SURAH_META.numberOfAyahs} · ${RECITER_LABEL}`;
 }
 function makeMasterPlayButton(){
   const wrap = window.el("button", {
     class: "surah-play",
     type: "button",
-    title: "Spela upp hela suran",
-    "aria-label": "Spela upp hela suran"
+    title: T("sura.play.all"),
+    "aria-label": T("sura.play.all")
   });
   wrap.innerHTML = PLAY_ICON;
   return wrap;
@@ -196,20 +229,17 @@ function fullSurahAudioUrl(reciterSlug, surahNumber){
   return `https://cdn.islamic.network/quran/audio-surah/128/${reciterSlug}/${surahNumber}.mp3`;
 }
 
-/* ============================================================
-   TRUE SOURCE OF TRUTH:
-   Fetch audio URL + timestamps from the SAME Quran.com endpoint,
-   so the timestamps definitely align with the file we play.
-   ============================================================ */
 const QF_CHAPTER_RECITER_IDS = {
-  "ar.alafasy":             7,
-  "ar.abdulbasitmurattal":  2,
-  "ar.abdurrahmaansudais":  3,
-  "ar.husary":              6,
-  "ar.minshawi":            9,
-  "ar.shaatree":            4,
-  "ar.hudhaify":            5,
-  "ar.muhammadayyoub":      1
+  "ar.alafasy": 7, "ar.abdulbasitmurattal": 2, "ar.abdurrahmaansudais": 3,
+  "ar.husary": 6, "ar.minshawi": 9, "ar.shaatree": 4, "ar.hudhaify": 5,
+  "ar.muhammadayyoub": 1, "ar.abdullahbasfar": 10, "ar.hanirifai": 11,
+  "ar.mahermuaiqly": 12, "ar.muhammadjibreel": 13, "ar.ahmedajamy": 14,
+  "ar.husarymujawwad": 15, "ar.minshawimujawwad": 16, "ar.ibrahimakhbar": 17,
+  "ar.parhizgar": 18, "ar.aymanswoaid": 19, "ar.saoodshuraym": 20,
+  "ar.ahmedalajmi": 21, "ar.nabilrifai": 22, "ar.khalifaaltunaiji": 23,
+  "ar.abdulmohsinalqasim": 24, "ar.salahalbudair": 25, "ar.yasseraldossari": 26,
+  "ar.abdullahawadaljuhani": 27, "ar.aliabdurrahmanalhuthaify": 28,
+  "ar.mohammadalghazali": 29, "ar.mahmoudkhalilalhusary": 30
 };
 
 function normalizeAudioUrl(u){
@@ -230,16 +260,13 @@ async function fetchChapterAudioAndTimestamps(reciterSlug, surahNumber){
     const data = await res.json();
     const file = data.audio_file;
     if (!file || !file.audio_url) return null;
-
     const audioUrl = normalizeAudioUrl(file.audio_url);
     const ts = Array.isArray(file.timestamps) ? file.timestamps : [];
     const timestamps = ts.map(t => ({ start: t.timestamp_from, end: t.timestamp_to }));
-
     return { audioUrl, timestamps: timestamps.length ? timestamps : null };
   } catch { return null; }
 }
 
-/* Character-proportional fallback (only used if API fails completely) */
 let AYAH_CHAR_SHARES = [];
 function computeAyahShares(){
   const counts = VERSES.map(v => Math.max(1, (v.plain || "").replace(/\s+/g, "").length));
@@ -260,9 +287,7 @@ function ayahIndexFromMs(ms){
       const t = AYAH_TIMESTAMPS_MS[i];
       if (ms >= t.start && ms < t.end) return i;
     }
-    if (ms >= AYAH_TIMESTAMPS_MS[AYAH_TIMESTAMPS_MS.length - 1].end){
-      return AYAH_TIMESTAMPS_MS.length - 1;
-    }
+    if (ms >= AYAH_TIMESTAMPS_MS[AYAH_TIMESTAMPS_MS.length - 1].end) return AYAH_TIMESTAMPS_MS.length - 1;
     return 0;
   }
   const dur = ljPlayer.duration;
@@ -274,7 +299,6 @@ function ayahIndexFromMs(ms){
   }
   return AYAH_CHAR_SHARES.length - 1;
 }
-
 function ayahStartMs(idx){
   if (AYAH_TIMESTAMPS_MS && AYAH_TIMESTAMPS_MS[idx]) return AYAH_TIMESTAMPS_MS[idx].start;
   const dur = ljPlayer.duration;
@@ -342,7 +366,6 @@ async function playFullSurah(){
   showPlayerBar();
   pb.toggle.innerHTML = PAUSE_ICON;
 
-  /* Fetch audio URL + timestamps from the SAME source. */
   AYAH_TIMESTAMPS_MS = null;
   let playUrl = null;
   try {
@@ -354,13 +377,11 @@ async function playFullSurah(){
     }
   } catch {}
 
-  // Fallback only if the API returned nothing at all.
   if (!playUrl){
     playUrl = fullSurahAudioUrl(RECITER_SLUG, SURAH_META.number);
     AYAH_TIMESTAMPS_MS = null;
   }
 
-  /* Set up audio */
   ljPlayer.pause();
   ljPlayer.src = playUrl;
   ljPlayer.playbackRate = SPEEDS[speedIdx];
@@ -573,9 +594,11 @@ document.addEventListener("keydown", (ev)=>{
 });
 
 /* ============================================================
-   Click-to-hear-a-word
+   Click-to-hear-a-word  (ORIGINAL WORKING IMPLEMENTATION)
+   Uses Tajweed.wordAudioUrlFromApi / Tajweed.wordAudioUrl
+   and the .w elements that tajweedToHtml() already emits.
    ============================================================ */
-document.addEventListener("click", (ev)=>{
+document.addEventListener("click", async (ev)=>{
   const w = ev.target.closest(".ayah-ar .w");
   if (!w) return;
   if (ev.target.closest("a,button")) return;
@@ -597,13 +620,83 @@ document.addEventListener("click", (ev)=>{
     url = map[word - 1] ? window.Tajweed.wordAudioUrlFromApi(map[word - 1]) : "";
   } catch {}
   if (!url) url = window.Tajweed.wordAudioUrl(surah, ayah, word);
+  if (!url) return;
+
+  // Pre-check the file so a missing word (404) doesn't throw NotSupportedError
+  if (typeof window.Tajweed.checkWordAudio === "function"){
+    const ok = await window.Tajweed.checkWordAudio(url);
+    if (!ok){
+      w.classList.add("no-audio");
+      setTimeout(()=> w.classList.remove("no-audio"), 1200);
+      return;
+    }
+  }
 
   ljPlayer.pause();
   ljPlayer.src = url;
-  ljPlayer.play().catch((err)=> console.warn("Word audio failed:", url, err));
   w.classList.add("playing");
-  setTimeout(()=> w.classList.remove("playing"), 900);
+  ljPlayer.play().catch(()=> w.classList.remove("playing"));
 });
+
+/* ============================================================
+   Live deep-linking: keep ?ayah= in sync with what's on screen,
+   and jump straight to a requested ayah on load.
+   ============================================================ */
+let ljScrollSpy = null;
+
+function ljSetupAyahScrollSpy(suraNum){
+  if (ljScrollSpy) ljScrollSpy.disconnect();
+  let lastAyah = null;
+
+  ljScrollSpy = new IntersectionObserver((entries)=>{
+    // Among ayahs currently crossing the thin band around viewport
+    // center, pick whichever one's midpoint is closest to center —
+    // that's "the ayah you're reading right now".
+    let best = null, bestDist = Infinity;
+    entries.forEach(entry=>{
+      if (!entry.isIntersecting) return;
+      const rect = entry.boundingClientRect;
+      const mid = rect.top + rect.height / 2;
+      const dist = Math.abs(mid - window.innerHeight / 2);
+      if (dist < bestDist){ bestDist = dist; best = entry.target; }
+    });
+    if (!best) return;
+    const ayahNum = Number(best.dataset.ayah);
+    if (!ayahNum || ayahNum === lastAyah) return;
+    lastAyah = ayahNum;
+
+    const url = new URL(location.href);
+    url.searchParams.set("sura", String(suraNum));
+    url.searchParams.set("ayah", String(ayahNum));
+    history.replaceState(null, "", url.pathname + url.search);
+  }, {
+    root: null,
+    // Only ayahs crossing a narrow band around vertical center count —
+    // keeps the URL settled on one ayah instead of flickering between
+    // whatever happens to be on screen.
+    rootMargin: "-45% 0px -45% 0px",
+    threshold: 0
+  });
+
+  AYAH_ELS.forEach(el => ljScrollSpy.observe(el));
+}
+
+function ljScrollToRequestedAyah(){
+  const p = new URLSearchParams(location.search);
+  const wanted = parseInt(p.get("ayah"), 10);
+  if (!Number.isInteger(wanted) || wanted < 1) return;
+  const target = AYAH_ELS.find(el => Number(el.dataset.ayah) === wanted);
+  if (!target) return;
+
+  // Let layout settle (fonts/images) before measuring scroll position.
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      target.scrollIntoView({ behavior: "auto", block: "center" });
+      target.classList.add("lj-deeplink-target");
+      setTimeout(()=> target.classList.remove("lj-deeplink-target"), 2300);
+    });
+  });
+}
 
 /* ---------- Main renderer ---------- */
 (async function(){
@@ -619,25 +712,34 @@ document.addEventListener("click", (ev)=>{
     let meta = {};
     let basmala = null;
 
-    if (settings.tajweedEnabled){
-      const data = await window.Tajweed.getSurahWithTajweed(num);
-      verses = data.verses;
-      const metaJson = await fetch(`https://api.alquran.cloud/v1/surah/${num}`).then(r => r.json());
-      meta = metaJson.data;
-    } else {
-      const { ar, sv } = await window.getSurahBilingual(num);
-      meta = ar;
-      verses = ar.ayahs.map((a, i) => ({
-        numberInSurah: a.numberInSurah,
-        tajweedHtml: null,
-        plain: a.text,
-        wordAudios: [],
-        sv: sv.ayahs[i] ? sv.ayahs[i].text : ""
-      }));
-      if (num !== 1 && verses[0]){
+  if (settings.tajweedEnabled){
+    const data = await window.Tajweed.getSurahWithTajweed(num);
+    verses = data.verses;
+    basmala = data.basmala;          // ← add this line
+    const metaJson = await fetch(`https://api.alquran.cloud/v1/surah/${num}`).then(r => r.json());
+    meta = metaJson.data;
+  } else {
+    const { ar, sv } = await window.getSurahBilingual(num);
+    meta = ar;
+    verses = ar.ayahs.map((a, i) => ({
+      numberInSurah: a.numberInSurah,
+      tajweedHtml: null,
+      plain: a.text,
+      wordAudios: [],
+      sv: sv.ayahs[i] ? sv.ayahs[i].text : ""
+    }));
+      if (num !== 1 && num !== 9 && verses[0]){
         const src = verses[0].plain || "";
         const { basmala: b, rest } = window.stripLeadingBasmala(src);
-        if (b){ basmala = b; verses[0].plain = rest; }
+        if (b){
+          basmala = b;
+          if (rest && rest.trim()){
+            verses[0].plain = rest;
+          } else {
+            verses.shift();
+            verses.forEach((v, i) => { v.numberInSurah = i + 1; });
+          }
+        }
       }
     }
 
@@ -653,7 +755,7 @@ document.addEventListener("click", (ev)=>{
     head.appendChild(h1);
     head.appendChild(window.el("p", { class: "lede arabic" }, meta.name || ""));
     head.appendChild(window.el("p", { class: "lede" },
-      `${(window.SURAH_SV && window.SURAH_SV[num]) || meta.englishNameTranslation || ""} · ${meta.numberOfAyahs} verser · ${meta.revelationType === "Meccan" ? "meckansk" : "medinensisk"}`));
+      `${(window.SURAH_SV && window.SURAH_SV[num]) || meta.englishNameTranslation || ""} · ${meta.numberOfAyahs} ${T("sura.verses")} · ${meta.revelationType === "Meccan" ? T("sura.meta.meccan") : T("sura.meta.medinan")}`));
 
     masterBtn.addEventListener("click", ()=>{
       if (fullSurahActive){ stopFullSurah(); ljPlayer.pause(); }
@@ -678,8 +780,8 @@ document.addEventListener("click", (ev)=>{
       const playBtn = window.el("button", {
         class: "ayah-play",
         type: "button",
-        title: "Spela upp versen (qari)",
-        "aria-label": "Spela upp versen (qari)"
+        title: T("sura.play.ayah"),
+        "aria-label": T("sura.play.ayah")
       });
       playBtn.innerHTML = PLAY_ICON;
 
@@ -687,12 +789,18 @@ document.addEventListener("click", (ev)=>{
       if (settings.showTranslation) inner.push(window.el("div", { class: "ayah-sv" }, v.sv || ""));
       const tools = window.el("div", { class: "ayah-tools" }, [
         playBtn,
-        window.el("a", { class: "ayah-link", href: `tafsir.html?sura=${num}&aya=${v.numberInSurah}` }, "Tafsir →")
+        window.el("a", {
+          class: "ayah-link",
+          href: `sura.html?sura=${num}&ayah=${v.numberInSurah}`,
+          title: T("sura.copyLink") || "Länk till denna vers"
+        }, "#" + v.numberInSurah),
+        window.el("a", { class: "ayah-link", href: `tafsir.html?sura=${num}&aya=${v.numberInSurah}` }, T("sura.tafsir"))
       ]);
       inner.push(tools);
 
       const block = window.el("div", {
         class: "ayah",
+        id: `ayah-${v.numberInSurah}`,
         "data-surah": String(num),
         "data-ayah": String(v.numberInSurah),
         "data-word-audios": JSON.stringify(v.wordAudios || [])
@@ -719,13 +827,40 @@ document.addEventListener("click", (ev)=>{
     });
 
     pager.innerHTML = "";
-    if (num > 1) pager.appendChild(window.el("a", { class: "btn btn-ghost", href: `sura.html?sura=${num - 1}` }, "← Föregående sura"));
+    if (num > 1) pager.appendChild(window.el("a", { class: "btn btn-ghost", href: `sura.html?sura=${num - 1}` }, T("sura.pager.prev")));
     else pager.appendChild(window.el("span", {}, ""));
-    if (num < 114) pager.appendChild(window.el("a", { class: "btn btn-ghost", href: `sura.html?sura=${num + 1}` }, "Nästa sura →"));
+    if (num < 114) pager.appendChild(window.el("a", { class: "btn btn-ghost", href: `sura.html?sura=${num + 1}` }, T("sura.pager.next")));
+
+    document.addEventListener("hm:langchange", () => {
+      const h1b = head.querySelector("h1 span");
+      if (h1b) h1b.textContent = `${num}. ${meta.englishName || ""}`;
+      const ledeP = head.querySelectorAll(".lede")[1];
+      if (ledeP) ledeP.textContent = `${(window.SURAH_SV && window.SURAH_SV[num]) || meta.englishNameTranslation || ""} · ${meta.numberOfAyahs} ${T("sura.verses")} · ${meta.revelationType === "Meccan" ? T("sura.meta.meccan") : T("sura.meta.medinan")}`;
+      const pagerLinks = pager.querySelectorAll("a");
+      if (num > 1 && pagerLinks[0]) pagerLinks[0].textContent = T("sura.pager.prev");
+      const nextIdx = (num > 1) ? 1 : 0;
+      if (num < 114 && pagerLinks[nextIdx]) pagerLinks[nextIdx].textContent = T("sura.pager.next");
+      document.querySelectorAll(".ayah-tools .ayah-link").forEach(a => {
+        a.textContent = T("sura.tafsir");
+      });
+      document.querySelectorAll(".ayah-play").forEach(b => {
+        b.title = T("sura.play.ayah");
+        b.setAttribute("aria-label", T("sura.play.ayah"));
+      });
+      if (masterBtn) {
+        masterBtn.title = T("sura.play.all");
+        masterBtn.setAttribute("aria-label", T("sura.play.all"));
+      }
+    });
+
+    // Deep-link support: jump to ?ayah=N if present, then keep the URL
+    // in sync with whatever's centered on screen as the user scrolls.
+    ljScrollToRequestedAyah();
+    ljSetupAyahScrollSpy(num);
 
   } catch (err){
     console.error(err);
-    head.innerHTML = `<p class="notice">Kunde inte hämta suran just nu (${err.message}). Kontrollera din internetanslutning och ladda om sidan.</p>`;
+    head.innerHTML = `<p class="notice">${T("sura.loadFail")} (${err.message}). ${T("sura.checkConnection")}</p>`;
   }
 })();
 </script>
